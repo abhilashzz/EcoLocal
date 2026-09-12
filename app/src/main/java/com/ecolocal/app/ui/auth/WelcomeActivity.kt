@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ecolocal.app.databinding.ActivityWelcomeBinding
+import com.ecolocal.app.ui.main.HomeActivity
+import com.google.firebase.auth.FirebaseAuth
 
 /**
  * WelcomeActivity — Entry screen of EcoLocal.
@@ -12,7 +14,7 @@ import com.ecolocal.app.databinding.ActivityWelcomeBinding
  *  - "Get Started" → RegisterActivity
  *  - "Sign In" → LoginActivity
  *
- * Firebase Authentication is NOT yet integrated (placeholder for Batch 02).
+ * Automatically routes to HomeActivity if a persistent Firebase Auth session exists.
  */
 class WelcomeActivity : AppCompatActivity() {
 
@@ -20,6 +22,17 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Session check: If user is signed in, bypass Welcome and proceed to HomeActivity
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val intent = Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
+            return
+        }
+
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
