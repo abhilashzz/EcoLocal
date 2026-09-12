@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Shop / store front icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,16v16a2,2 0,0 0,2 2h24a2,2 0,0 0,2 -2L34,16M4,12h32l-3,-8L7,4Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,34v-8a1,1 0,0 1,1 -1h8a1,1 0,0 1,1 1v8" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M4,12a6,6 0,0 0,12 0M16,12a6,6 0,0 0,12 0M28,12a6,6 0,0 0,8 0" />
+</vector>

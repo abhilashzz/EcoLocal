@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Giving hand / heart-in-hand icon -->
+    <path
+        android:strokeColor="@color/eco_orange"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:pathData="M8,24c0,0 4,-2 8,-2c2,0 4,1 6,1c2,0 10,-4 10,-4c2,-1 4,1 2,3L26,26c-2,1 -4,2 -8,2c-4,0 -10,-2 -10,-2V24Z" />
+    <path
+        android:strokeColor="@color/eco_orange"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:pathData="M8,24v6" />
+    <path
+        android:fillColor="@color/eco_orange"
+        android:pathData="M20,10 C20,10 16,6 16,9 C16,11 18,12 20,14 C22,12 24,11 24,9 C24,6 20,10 20,10Z" />
+</vector>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eco_bg_screen"
+    android:fitsSystemWindows="true">
+
+    <!-- Top App Bar -->
+    <RelativeLayout
+        android:id="@+id/top_bar_chat"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/eco_background_white"
+        android:elevation="2dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btn_chat_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
+            android:padding="6dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/eco_title_dark" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_chat_header_avatar"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@id/btn_chat_back"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_avatar_woman"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/iv_chat_header_avatar"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_chat_header_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Nadeesha Silva"
+                android:textColor="@color/eco_title_dark"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_chat_header_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Online • Community Member"
+                android:textColor="@color/eco_green_primary"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Optional Listing Context Banner -->
+    <LinearLayout
+        android:id="@+id/layout_chat_listing_banner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#E8F4EC"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar_chat">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_nav_market"
+            app:tint="@color/eco_green_primary" />
+
+        <TextView
+            android:id="@+id/tv_chat_listing_context"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="Listing: Wooden Study Desk (Rs. 8,500)"
+            android:textColor="@color/eco_green_primary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="View >"
+            android:textColor="@color/eco_green_primary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Messages List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_chat_messages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@id/layout_chat_input_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_chat_listing_banner"
+        tools:listitem="@layout/item_chat_message" />
+
+    <!-- Bottom Message Input Bar -->
+    <LinearLayout
+        android:id="@+id/layout_chat_input_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/eco_background_white"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/et_chat_input"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_field"
+            android:fontFamily="sans-serif"
+            android:hint="Type a message..."
+            android:imeOptions="actionSend"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="3"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/eco_title_dark"
+            android:textColorHint="@color/eco_hint_gray"
+            android:textSize="14sp" />
+
+        <FrameLayout
+            android:id="@+id/btn_chat_send"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_button_primary"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="#FFFFFF" />
+        </FrameLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

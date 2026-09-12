@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    WELCOME SCREEN
+    Background: cream #F5F0E8
+    Vertical chain distributes all sections across the full screen height,
+    matching the Figma reference proportions.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eco_background_cream"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <!--
+        match_parent height + fillViewport=true → ConstraintLayout fills the screen.
+        All elements are connected top↔bottom forming a vertical spread chain,
+        so free space is distributed between sections rather than pooling at bottom.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="24dp"
+        android:paddingBottom="36dp">
+
+        <!-- ── Logo Row: leaf + "EcoLocal" ─────────────────── -->
+        <LinearLayout
+            android:id="@+id/layoutLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/layoutIconGrid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread">
+
+            <ImageView
+                android:layout_width="@dimen/welcome_logo_icon_size"
+                android:layout_height="@dimen/welcome_logo_icon_size"
+                android:contentDescription="@string/cd_logo"
+                android:src="@drawable/ic_leaf"
+                app:tint="@color/eco_green_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/app_name"
+                android:textColor="@color/eco_text_primary"
+                android:textSize="@dimen/welcome_logo_text_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- ── 2x2 Icon Card Grid ─────────────────────────── -->
+        <!-- 252dp = 112 (card) + 28 (gap) + 112 (card), matching Figma spacing -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutIconGrid"
+            android:layout_width="252dp"
+            android:layout_height="252dp"
+            app:layout_constraintBottom_toTopOf="@id/tvTagline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutLogo">
+
+            <!-- Top-left: White card with hand/heart icon -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTopLeft"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                app:cardBackgroundColor="@color/eco_card_white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
+                app:layout_constraintBottom_toTopOf="@id/cardBottomLeft"
+                app:layout_constraintEnd_toStartOf="@id/cardTopRight"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread_inside">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_giving_hand" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Top-right: Dark green circle with shop icon -->
+            <ImageView
+                android:id="@+id/cardTopRight"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:background="@drawable/bg_icon_card_green_circle"
+                android:contentDescription="@null"
+                android:padding="28dp"
+                android:src="@drawable/ic_shop"
+                app:layout_constraintBottom_toTopOf="@id/cardBottomRight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardTopLeft"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Bottom-left: Orange rounded square with handshake -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardBottomLeft"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                app:cardBackgroundColor="@color/eco_orange"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cardBottomRight"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardTopLeft">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_handshake"
+                    app:tint="#1A1A1A" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Bottom-right: White card with community icon -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardBottomRight"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                app:cardBackgroundColor="@color/eco_card_white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardBottomLeft"
+                app:layout_constraintTop_toBottomOf="@id/cardTopRight">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_community" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ── Tagline Heading ────────────────────────────── -->
+        <TextView
+            android:id="@+id/tvTagline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="Local help. Local\nfinds. One community."
+            android:textColor="@color/eco_text_primary"
+            android:textSize="@dimen/welcome_tagline_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tvBody"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutIconGrid" />
+
+        <!-- ── Body Text ─────────────────────────────────── -->
+        <!-- marginTop=12dp: Figma shows tagline-to-body gap is tight -->
+        <TextView
+            android:id="@+id/tvBody"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/welcome_body"
+            android:textColor="@color/eco_text_secondary"
+            android:textSize="@dimen/welcome_body_size"
+            app:layout_constraintBottom_toTopOf="@id/btnGetStarted"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTagline" />
+
+        <!--
+            ── Get Started Button ──────────────────────────────
+            FIX: android:drawableEnd on a Button centers (text+icon) as a group,
+            pushing the text left of true center.
+            Solution: FrameLayout with bg_button_primary ripple drawable.
+              - TextView uses layout_gravity="center" → always truly centered
+              - ImageView uses layout_gravity="end|center_vertical" → pinned to right edge
+            Same chain constraints, same ID, same height, same orange background.
+        -->
+        <FrameLayout
+            android:id="@+id/btnGetStarted"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/btn_height"
+            android:background="@drawable/bg_button_primary"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toTopOf="@id/layoutSignIn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBody">
+
+            <!-- Text: absolutely centered in the full button width -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/welcome_get_started"
+                android:textColor="@color/eco_background_white"
+                android:textSize="@dimen/btn_text_size"
+                android:textStyle="bold" />
+
+            <!-- Arrow: pinned to right edge, vertically centered, independent of text -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_arrow_right" />
+
+        </FrameLayout>
+
+        <!-- ── Sign In Prompt ─────────────────────────────── -->
+        <!-- marginTop=16dp: Figma shows button-to-sign-in gap is tight -->
+        <LinearLayout
+            android:id="@+id/layoutSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnGetStarted">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_sign_in_prompt"
+                android:textColor="@color/eco_text_secondary"
+                android:textSize="@dimen/text_md" />
+
+            <TextView
+                android:id="@+id/tvSignIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp"
+                android:text="@string/welcome_sign_in"
+                android:textColor="@color/eco_green_primary"
+                android:textSize="@dimen/text_md"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

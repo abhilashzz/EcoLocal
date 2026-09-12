@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Lock icon -->
+    <path
+        android:strokeColor="@color/eco_input_icon"
+        android:strokeWidth="1.8"
+        android:fillColor="#00000000"
+        android:pathData="M7,11 V7 A5,5 0,0 1,17 7 V11" />
+    <path
+        android:strokeColor="@color/eco_input_icon"
+        android:strokeWidth="1.8"
+        android:fillColor="#00000000"
+        android:pathData="M5,11 H19 C19.55,11 20,11.45 20,12 V21 C20,21.55 19.55,22 19,22 H5 C4.45,22 4,21.55 4,21 V12 C4,11.45 4.45,11 5,11 Z" />
+    <path
+        android:fillColor="@color/eco_input_icon"
+        android:pathData="M12,15 A1.5,1.5 0,1 1,11.999 15 Z" />
+</vector>

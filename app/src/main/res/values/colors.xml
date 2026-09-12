@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ─── EcoLocal Brand ─────────────────────────────── -->
+    <color name="eco_green_dark">#1B4332</color>       <!-- darkest green, leaf icon bg -->
+    <color name="eco_green_primary">#2D6A4F</color>    <!-- primary green, brand text, links -->
+    <color name="eco_green_medium">#40916C</color>     <!-- medium green, accents -->
+    <color name="eco_green_light">#D8EDE4</color>      <!-- light mint, profile photo bg -->
+    <color name="eco_green_card">#2D6A4F</color>       <!-- welcome top-right icon card -->
+
+    <!-- ─── Orange Accent ─────────────────────────────── -->
+    <color name="eco_orange">#F4A932</color>           <!-- CTA buttons, orange card bg -->
+    <color name="eco_orange_dark">#E09020</color>      <!-- pressed/ripple state -->
+
+    <!-- ─── Backgrounds ───────────────────────────────── -->
+    <color name="eco_background_cream">#F5F0E8</color> <!-- Welcome screen warm cream bg -->
+    <color name="eco_background_white">#FFFFFF</color> <!-- Register / card surfaces -->
+
+    <!-- ─── Text ──────────────────────────────────────── -->
+    <color name="eco_text_primary">#1A1A1A</color>     <!-- headings -->
+    <color name="eco_text_secondary">#6B7280</color>   <!-- subtitles / body -->
+    <color name="eco_text_hint">#9CA3AF</color>        <!-- placeholder text -->
+    <color name="eco_text_link">#2D6A4F</color>        <!-- clickable link green -->
+
+    <!-- ─── Inputs ────────────────────────────────────── -->
+    <color name="eco_input_border">#D1D5DB</color>
+
+    <color name="eco_input_bg">#FAFAFA</color>
+    <color name="eco_input_icon">#9CA3AF</color>
+
+    <!-- ─── Icon Cards (Welcome) ──────────────────────── -->
+    <color name="eco_card_white">#FFFFFF</color>
+    <color name="eco_card_shadow">#1A000000</color>
+
+    <!-- ─── Login Gradient Blobs ──────────────────────── -->
+    <color name="eco_blob_green">#80B7D4C2</color>     <!-- top-right green blob (semi-transparent) -->
+    <color name="eco_blob_orange">#80F4C9A0</color>    <!-- bottom-left peach blob -->
+
+    <!-- ─── Dividers / Borders ────────────────────────── -->
+    <color name="eco_divider">#E5E7EB</color>
+
+    <!-- ─── Status bar ────────────────────────────────── -->
+    <color name="eco_status_bar_welcome">#F5F0E8</color>
+    <color name="eco_status_bar_white">#FFFFFF</color>
+
+    <!-- ─── Batch 02: Main Screens & Components ────────── -->
+    <color name="eco_bg_screen">#FBF9F3</color>
+    <color name="eco_search_border">#BEC9C1</color>
+    <color name="eco_nav_pill_bg">#E8F2EC</color>
+    <color name="eco_nav_selected_text">#1B4332</color>
+    <color name="eco_nav_unselected">#59655E</color>
+    <color name="eco_secondary_dark">#4F5953</color>
+    <color name="eco_hint_gray">#76827B</color>
+    <color name="eco_title_dark">#1A201C</color>
+    <color name="eco_chip_selected_bg">#2D6A4F</color>
+    <color name="eco_chip_selected_text">#FFFFFF</color>
+    <color name="eco_chip_unselected_bg">#E8F5EE</color>
+    <color name="eco_chip_unselected_text">#2D6A4F</color>
+    <color name="eco_mkt_cat_circle_bg">#F0EEE8</color>
+    <color name="eco_mkt_cat_icon">#3A473F</color>
+    <color name="eco_badge_giveaway">#E58B44</color>
+    <color name="eco_badge_offer_bg">#D8EDE4</color>
+    <color name="eco_badge_offer_text">#246B43</color>
+    <color name="eco_badge_request_bg">#E5EAE6</color>
+    <color name="eco_badge_request_text">#4F5953</color>
+    <color name="eco_badge_available_bg">#E8F5EE</color>
+    <color name="eco_badge_available_text">#2D6A4F</color>
+    <color name="eco_badge_sale_bg">#F0F4F1</color>
+    <color name="eco_badge_sale_border">#D0D9D3</color>
+    <color name="eco_badge_sale_text">#4F5953</color>
+    <color name="eco_segmented_bg">#E8ECE9</color>
+    <color name="eco_segmented_tab_bg">#FFFFFF</color>
+    <color name="eco_available_dot">#22C55E</color>
+    <color name="eco_price_green">#2D6A4F</color>
+    <color name="eco_price_orange">#E67E22</color>
+    <color name="eco_card_bg">#FFFFFF</color>
+    <color name="eco_card_border_subtle">#E2EAE5</color>
+    <color name="eco_fab_orange">#F4A932</color>
+    <color name="eco_fab_text">#1A1A1A</color>
+
+</resources>

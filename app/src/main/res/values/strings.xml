@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EcoLocal</string>
+
+    <!-- ─── Welcome ─────────────────────────────────────── -->
+    <string name="welcome_tagline">Local help. Local\nfinds. One community.</string>
+    <string name="welcome_body">Discover services, share what you can, and find useful items around your community.</string>
+    <string name="welcome_get_started">Get Started</string>
+    <string name="welcome_sign_in_prompt">Already have an account?</string>
+    <string name="welcome_sign_in">Sign In</string>
+
+    <!-- ─── Register ────────────────────────────────────── -->
+    <string name="register_title">Create your EcoLocal account</string>
+    <string name="register_subtitle">Join your community marketplace and start sharing.</string>
+    <string name="register_upload_photo">Upload Profile Photo</string>
+    <string name="register_hint_name">Jane Doe</string>
+    <string name="register_hint_email">jane.doe@example.com</string>
+    <string name="register_hint_password">••••••••</string>
+    <string name="register_hint_confirm">••••••••</string>
+    <string name="register_hint_location">Downtown, Seattle</string>
+    <string name="register_label_name">Full Name</string>
+    <string name="register_label_email">Email</string>
+    <string name="register_label_password">Password</string>
+    <string name="register_label_confirm">Confirm Password</string>
+    <string name="register_label_location">Location/Area</string>
+    <string name="register_cta">Create Account</string>
+    <string name="register_sign_in_prompt">Already have an account?</string>
+    <string name="register_sign_in">Sign In</string>
+
+    <!-- ─── Login ────────────────────────────────────────── -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to continue to EcoLocal.</string>
+    <string name="login_label_email">Email address</string>
+    <string name="login_hint_email">name@example.com</string>
+    <string name="login_label_password">Password</string>
+    <string name="login_hint_password">••••••••</string>
+    <string name="login_forgot">Forgot Password?</string>
+    <string name="login_cta">Sign In</string>
+    <string name="login_register_prompt">New to EcoLocal?</string>
+    <string name="login_register">Create Account</string>
+
+    <!-- ─── Accessibility ────────────────────────────────── -->
+    <string name="cd_back">Back</string>
+    <string name="cd_logo">EcoLocal logo</string>
+    <string name="cd_profile_photo">Upload profile photo</string>
+    <string name="cd_toggle_password">Toggle password visibility</string>
+    <string name="cd_email_icon">Email icon</string>
+    <string name="cd_lock_icon">Lock icon</string>
+    <string name="cd_location_icon">Location icon</string>
+
+    <!-- ─── Batch 02: Home, Marketplace, Community Services ─── -->
+    <string name="home_greeting">Good morning, Nimal</string>
+    <string name="home_location">Malabe, Sri Lanka</string>
+    <string name="search_hint_home">Search services or marketplace</string>
+    <string name="section_community_services">Community Services</string>
+    <string name="section_community_subtitle">Connect with local skills</string>
+    <string name="action_view_all">View All</string>
+    <string name="section_local_marketplace">Local Marketplace</string>
+    <string name="section_marketplace_subtitle">Buy, sell, or trade nearby</string>
+    <string name="action_browse">Browse</string>
+    <string name="section_nearby_recent">Nearby &amp; Recent</string>
+    <string name="fab_create_post">+ Create Post</string>
+
+    <string name="title_marketplace">Marketplace</string>
+    <string name="search_hint_marketplace">Search local items</string>
+    <string name="fab_post_listing">+ Post Listing</string>
+
+    <string name="title_community_services">Community Services</string>
+    <string name="search_hint_services">Search services or requests</string>
+    <string name="tab_service_offers">Service Offers</string>
+    <string name="tab_help_requests">Help Requests</string>
+    <string name="btn_offer_help">Offer Help</string>
+
+    <!-- Bottom Nav Labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_services">Services</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_activity">Activity</string>
+    <string name="nav_profile">Profile</string>
+
+</resources>

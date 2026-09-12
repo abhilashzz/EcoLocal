@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eco_bg_screen"
+    android:fitsSystemWindows="true">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_market"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="120dp">
+
+            <!-- Top Bar: Avatar + EcoLocal Brand + Bell (Vertically centered) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_market_avatar"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_avatar_woman"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="EcoLocal"
+                    android:textColor="@color/eco_green_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btn_notifications"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:contentDescription="@null"
+                    android:focusable="true"
+                    android:src="@drawable/ic_bell" />
+            </RelativeLayout>
+
+            <!-- Screen Title: Marketplace -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/title_marketplace"
+                android:textColor="@color/eco_title_dark"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <!-- Search Field (10dp rounded rectangle) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/search_height"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_search_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/eco_hint_gray" />
+
+                <EditText
+                    android:id="@+id/et_search_marketplace"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:background="@null"
+                    android:fontFamily="sans-serif"
+                    android:hint="@string/search_hint_marketplace"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:textColor="@color/eco_text_primary"
+                    android:textColorHint="@color/eco_hint_gray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Filter Chips Row -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- All (selected) -->
+                    <TextView
+                        android:id="@+id/chip_market_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/chip_height"
+                        android:background="@drawable/bg_chip_selected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="All"
+                        android:textColor="@color/eco_chip_selected_text"
+                        android:textSize="13sp" />
+
+                    <!-- For Sale -->
+                    <TextView
+                        android:id="@+id/chip_market_sale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/chip_height"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="For Sale"
+                        android:textColor="@color/eco_chip_unselected_text"
+                        android:textSize="13sp" />
+
+                    <!-- Free -->
+                    <TextView
+                        android:id="@+id/chip_market_free"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/chip_height"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="Free"
+                        android:textColor="@color/eco_chip_unselected_text"
+                        android:textSize="13sp" />
+
+                    <!-- Donation -->
+                    <TextView
+                        android:id="@+id/chip_market_donation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/chip_height"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="Donation"
+                        android:textColor="@color/eco_chip_unselected_text"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Circular Category Row (Requirement #2) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_market_circle_categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal" />
+
+            <!-- Product Grid (2-column layout - Requirement #6) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_market_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Action Button: + Post Listing -->
+    <LinearLayout
+        android:id="@+id/fab_post_listing"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_btn_fab_orange"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_bar"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_plus" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Post Listing"
+            android:textColor="@color/eco_fab_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Bottom Navigation Bar Include -->
+    <include
+        android:id="@+id/bottom_nav_bar"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/nav_height"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

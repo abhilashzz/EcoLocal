@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    LOGIN SCREEN
+    Background: white with soft green blob (top-right) and peach blob (bottom-left)
+    Structure:
+      - Full-screen blobs (decorative, behind content)
+      - Centered white card (rounded, elevated) containing:
+          • Green leaf rounded-square logo
+          • "Welcome back" title (bold, centered)
+          • "Sign in to continue to EcoLocal." subtitle (gray, centered)
+          • Form container with slight separator:
+              - "Email address" label + email field (envelope icon)
+              - "Password" label + password field (lock + eye-off icons)
+              - "Forgot Password?" right-aligned green link
+          • "Sign In →" orange pill button (FrameLayout: text centered, arrow at right)
+      - "New to EcoLocal? Create Account" footer below card
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eco_background_white">
+
+    <!-- ── Background Blob: top-right green ─────────────────── -->
+    <View
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="-80dp"
+        android:layout_marginEnd="-80dp"
+        android:alpha="0.5"
+        android:background="@drawable/bg_blob_green" />
+
+    <!-- ── Background Blob: bottom-left orange/peach ─────────── -->
+    <View
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="-80dp"
+        android:layout_marginBottom="-80dp"
+        android:alpha="0.5"
+        android:background="@drawable/bg_blob_orange" />
+
+    <!-- ── Centered Content ──────────────────────────────────── -->
+    <ScrollView
+        android:id="@+id/loginScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="56dp">
+
+            <!-- ── White login card ──────────────────────────── -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/eco_background_white"
+                app:cardCornerRadius="@dimen/login_card_corner"
+                app:cardElevation="@dimen/login_card_elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/login_card_padding">
+
+                    <!-- Leaf logo (dark green rounded square) -->
+                    <ImageView
+                        android:layout_width="@dimen/login_leaf_container"
+                        android:layout_height="@dimen/login_leaf_container"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/bg_leaf_logo"
+                        android:contentDescription="@string/cd_logo"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_leaf" />
+
+                    <!-- "Welcome back" — bold/black, centered -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/login_title"
+                        android:textColor="@color/eco_text_primary"
+                        android:textSize="@dimen/login_title_size"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle — regular, gray, centered -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center"
+                        android:text="@string/login_subtitle"
+                        android:textColor="@color/eco_text_secondary"
+                        android:textSize="@dimen/login_subtitle_size" />
+
+                    <!-- ── Form fields container ────────────────── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <!-- Email address label -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/login_label_email"
+                            android:textColor="@color/eco_text_primary"
+                            android:textSize="@dimen/input_label_size" />
+
+                        <!-- Email input with envelope icon -->
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/input_height"
+                            android:layout_marginTop="6dp">
+
+                            <EditText
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_input_field"
+                                android:fontFamily="sans-serif"
+                                android:hint="@string/login_hint_email"
+                                android:importantForAutofill="yes"
+                                android:inputType="textEmailAddress"
+                                android:paddingStart="48dp"
+                                android:paddingEnd="@dimen/input_padding_horizontal"
+                                android:textColor="@color/eco_text_primary"
+                                android:textColorHint="@color/eco_text_hint"
+                                android:textSize="@dimen/input_text_size" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="start|center_vertical"
+                                android:layout_marginStart="14dp"
+                                android:contentDescription="@string/cd_email_icon"
+                                android:src="@drawable/ic_email" />
+
+                        </FrameLayout>
+
+                        <!-- Password label -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/login_label_password"
+                            android:textColor="@color/eco_text_primary"
+                            android:textSize="@dimen/input_label_size" />
+
+                        <!-- Password input with lock + eye-off icons -->
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/input_height"
+                            android:layout_marginTop="6dp">
+
+                            <EditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_input_field"
+                                android:fontFamily="sans-serif"
+                                android:hint="@string/login_hint_password"
+                                android:importantForAutofill="yes"
+                                android:inputType="textPassword"
+                                android:paddingStart="48dp"
+                                android:paddingEnd="52dp"
+                                android:textColor="@color/eco_text_primary"
+                                android:textColorHint="@color/eco_text_hint"
+                                android:textSize="@dimen/input_text_size" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="start|center_vertical"
+                                android:layout_marginStart="14dp"
+                                android:contentDescription="@string/cd_lock_icon"
+                                android:src="@drawable/ic_lock" />
+
+                            <ImageButton
+                                android:id="@+id/btnTogglePassword"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="end|center_vertical"
+                                android:layout_marginEnd="8dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:contentDescription="@string/cd_toggle_password"
+                                android:src="@drawable/ic_eye_off"
+                                app:tint="@color/eco_input_icon" />
+
+                        </FrameLayout>
+
+                        <!-- "Forgot Password?" — right-aligned, green, bold -->
+                        <TextView
+                            android:id="@+id/tvForgotPassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="sans-serif-medium"
+                            android:padding="4dp"
+                            android:text="@string/login_forgot"
+                            android:textColor="@color/eco_green_primary"
+                            android:textSize="@dimen/text_md"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!--
+                        ── Sign In Button ──────────────────────────────
+                        FrameLayout: text truly centered, arrow independently at right edge.
+                        Same fix as Welcome's Get Started button.
+                        marginTop=24dp matches Figma gap between Forgot Password and button.
+                    -->
+                    <FrameLayout
+                        android:id="@+id/btnSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/bg_button_primary"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <!-- Text: absolutely centered across full button width -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/login_cta"
+                            android:textColor="@color/eco_background_white"
+                            android:textSize="@dimen/btn_text_size"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow: pinned to right edge, vertically centered -->
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginEnd="20dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_arrow_right" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- ── New to EcoLocal? Create Account ─────────── -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_register_prompt"
+                    android:textColor="@color/eco_text_secondary"
+                    android:textSize="@dimen/text_md" />
+
+                <TextView
+                    android:id="@+id/tvCreateAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:text="@string/login_register"
+                    android:textColor="@color/eco_green_primary"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

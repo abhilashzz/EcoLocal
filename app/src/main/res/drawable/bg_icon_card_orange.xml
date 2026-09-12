@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Orange icon card (bottom-left on Welcome screen) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/eco_orange" />
+    <corners android:radius="@dimen/welcome_icon_card_corner" />
+</shape>

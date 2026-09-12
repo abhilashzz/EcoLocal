@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="4dp">
+
+    <!-- Outgoing Message Container (My message - Right Aligned) -->
+    <LinearLayout
+        android:id="@+id/layout_msg_outgoing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginStart="64dp"
+        android:background="@drawable/bg_button_primary"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="10dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_outgoing_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Yes, can I pick them up tomorrow around 4 PM?"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_outgoing_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="4:15 PM"
+            android:textColor="#CCFFFFFF"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Incoming Message Container (Other's message - Left Aligned) -->
+    <LinearLayout
+        android:id="@+id/layout_msg_incoming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginEnd="64dp"
+        android:background="@drawable/bg_card_white_16dp"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_incoming_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Hi Nimal! Are you interested in the textbooks?"
+            android:textColor="@color/eco_title_dark"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_incoming_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:text="4:12 PM"
+            android:textColor="@color/eco_hint_gray"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:name=".EcoLocalApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EcoLocal">
+
+        <!-- Welcome / entry screen — cream status bar blends into cream background -->
+        <activity
+            android:name=".ui.auth.WelcomeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EcoLocal.Welcome"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Register screen — cream status bar (Figma background is cream) -->
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Register"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Login screen — transparent status bar so blobs show edge-to-edge -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EcoLocal.Login"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Batch 02 Main Screens (singleTop launchMode avoids back-stack issues) -->
+        <activity
+            android:name=".ui.main.HomeActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.main.MarketplaceActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.main.CommunityServicesActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Batch 03 Create Post & Marketplace Management Screens -->
+        <activity
+            android:name=".ui.post.CreatePostTypeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.post.CreateMarketplaceListingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.post.PostPreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.post.PostSuccessActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.marketplace.MarketplaceListingDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.activity.MyActivityActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.post.EditListingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.main.SearchResultsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.notifications.NotificationsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.chat.ChatsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+    </application>
+
+</manifest>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- White icon card with rounded corners and subtle shadow for Welcome screen -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/eco_card_white" />
+    <corners android:radius="@dimen/welcome_icon_card_corner" />
+</shape>

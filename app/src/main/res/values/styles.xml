@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base EcoLocal style -->
+    <style name="Widget.EcoLocal" parent="" />
+
+    <!-- Base EcoLocal Button style -->
+    <style name="Widget.EcoLocal.Button" parent="Widget.EcoLocal" />
+
+    <!-- Primary CTA Button (Orange Pill) -->
+    <style name="Widget.EcoLocal.Button.Primary" parent="Widget.EcoLocal.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/eco_background_white</item>
+        <item name="android:textSize">@dimen/btn_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Input Field Label -->
+    <style name="Widget.EcoLocal.InputLabel" parent="Widget.EcoLocal">
+        <item name="android:textSize">@dimen/input_label_size</item>
+        <item name="android:textColor">@color/eco_text_primary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:layout_marginBottom">@dimen/input_label_margin_bottom</item>
+    </style>
+
+    <!-- Prompt / Footer Text -->
+    <style name="Widget.EcoLocal.PromptText" parent="Widget.EcoLocal">
+        <item name="android:textSize">@dimen/text_md</item>
+        <item name="android:textColor">@color/eco_text_secondary</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Link Text -->
+    <style name="Widget.EcoLocal.LinkText" parent="Widget.EcoLocal">
+        <item name="android:textSize">@dimen/text_md</item>
+        <item name="android:textColor">@color/eco_green_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <!-- Shape appearance overlays -->
+    <style name="ShapeAppearance.Rounded8dp" parent="">
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Rounded10dp" parent="">
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Rounded12dp" parent="">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Rounded14dp" parent="">
+        <item name="cornerSize">14dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Rounded16dp" parent="">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Circle" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+</resources>

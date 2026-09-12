@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <!-- Camera + plus icon for profile photo upload -->
+    <path
+        android:strokeColor="@color/eco_green_primary"
+        android:strokeWidth="1.8"
+        android:fillColor="#00000000"
+        android:pathData="M5,10 C5,8.9 5.9,8 7,8 L10,8 L12,5 L20,5 L22,8 L25,8 C26.1,8 27,8.9 27,10 L27,24 C27,25.1 26.1,26 25,26 L7,26 C5.9,26 5,25.1 5,24 Z" />
+    <!-- Camera lens (circle via arc path) -->
+    <path
+        android:strokeColor="@color/eco_green_primary"
+        android:strokeWidth="1.8"
+        android:fillColor="#00000000"
+        android:pathData="M16,12.5 A4.5,4.5 0,1 1,15.999 12.5 Z" />
+    <!-- Plus symbol top-right -->
+    <path
+        android:fillColor="@color/eco_green_primary"
+        android:pathData="M24,4 L24,7 L21,7 L21,9 L24,9 L24,12 L26,12 L26,9 L29,9 L29,7 L26,7 L26,4 Z" />
+</vector>

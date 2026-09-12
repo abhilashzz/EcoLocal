@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Community / people icon -->
+    <!-- Left person head (circle via path) -->
+    <path
+        android:fillColor="@color/eco_green_primary"
+        android:pathData="M15,10 A4,4 0,1 1,14.999 10 Z" />
+    <!-- Right person head (circle via path) -->
+    <path
+        android:fillColor="@color/eco_green_primary"
+        android:pathData="M27,10 A4,4 0,1 1,26.999 10 Z" />
+    <!-- Left person body -->
+    <path
+        android:fillColor="@color/eco_green_primary"
+        android:pathData="M7,30 C7,24 11,20 15,20 C19,20 23,24 23,30 Z" />
+    <!-- Right person body -->
+    <path
+        android:fillColor="@color/eco_green_primary"
+        android:pathData="M23,30 C23,24 24,20 27,20 C30,20 33,24 33,30 Z" />
+</vector>

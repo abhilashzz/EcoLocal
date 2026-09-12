@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rounded square background for the leaf logo icon on Login screen -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/eco_green_primary" />
+    <corners android:radius="@dimen/login_leaf_corner" />
+</shape>

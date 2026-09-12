@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme — no ActionBar, full-screen content -->
+    <style name="Theme.EcoLocal" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/eco_green_primary</item>
+        <item name="colorPrimaryVariant">@color/eco_green_dark</item>
+        <item name="colorOnPrimary">@color/eco_background_white</item>
+        <item name="colorSecondary">@color/eco_orange</item>
+        <item name="colorOnSecondary">@color/eco_background_white</item>
+        <item name="android:windowBackground">@color/eco_background_cream</item>
+        <item name="android:statusBarColor">@color/eco_background_cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Welcome screen theme — cream background, status bar blends in -->
+    <style name="Theme.EcoLocal.Welcome">
+        <item name="android:statusBarColor">@color/eco_background_cream</item>
+        <item name="android:windowBackground">@color/eco_background_cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Register screen theme — cream background same as Welcome Figma -->
+    <style name="Theme.EcoLocal.Register">
+        <item name="android:statusBarColor">@color/eco_background_cream</item>
+        <item name="android:windowBackground">@color/eco_background_cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Login screen theme — transparent status bar over gradient -->
+    <style name="Theme.EcoLocal.Login">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/eco_background_white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Main screens theme (Home, Marketplace, Community Services) -->
+    <style name="Theme.EcoLocal.Main">
+        <item name="android:statusBarColor">@color/eco_bg_screen</item>
+        <item name="android:windowBackground">@color/eco_bg_screen</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+</resources>
+

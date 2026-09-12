@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ─── Spacing ──────────────────────────────────────── -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="spacing_xxl">48dp</dimen>
+
+    <!-- ─── Screen Padding ───────────────────────────────── -->
+    <dimen name="screen_padding_horizontal">24dp</dimen>
+    <dimen name="screen_padding_vertical">24dp</dimen>
+
+    <!-- ─── Buttons ──────────────────────────────────────── -->
+    <dimen name="btn_height">52dp</dimen>
+    <dimen name="btn_corner_radius">26dp</dimen>         <!-- full pill -->
+    <dimen name="btn_text_size">16sp</dimen>
+
+    <!-- ─── Input Fields ─────────────────────────────────── -->
+    <dimen name="input_height">52dp</dimen>
+    <dimen name="input_corner_radius">10dp</dimen>
+    <dimen name="input_stroke_width">1dp</dimen>
+    <dimen name="input_padding_horizontal">16dp</dimen>
+    <dimen name="input_text_size">15sp</dimen>
+    <dimen name="input_label_size">14sp</dimen>
+    <dimen name="input_label_margin_bottom">6dp</dimen>
+
+    <!-- ─── Welcome Screen ───────────────────────────────── -->
+    <dimen name="welcome_icon_card_size">112dp</dimen>
+    <dimen name="welcome_icon_card_corner">20dp</dimen>
+    <dimen name="welcome_icon_size">44dp</dimen>
+    <dimen name="welcome_grid_spacing">12dp</dimen>
+    <dimen name="welcome_tagline_size">28sp</dimen>
+    <dimen name="welcome_body_size">15sp</dimen>
+    <dimen name="welcome_logo_text_size">22sp</dimen>
+    <dimen name="welcome_logo_icon_size">28dp</dimen>
+
+    <!-- ─── Register Screen ──────────────────────────────── -->
+    <dimen name="register_title_size">24sp</dimen>
+    <dimen name="register_subtitle_size">14sp</dimen>
+    <dimen name="register_profile_circle">88dp</dimen>
+    <dimen name="register_camera_icon">36dp</dimen>
+
+    <!-- ─── Login Screen ─────────────────────────────────── -->
+    <dimen name="login_leaf_icon_size">48dp</dimen>
+    <dimen name="login_leaf_container">72dp</dimen>
+    <dimen name="login_leaf_corner">18dp</dimen>
+    <dimen name="login_title_size">26sp</dimen>
+    <dimen name="login_subtitle_size">14sp</dimen>
+    <dimen name="login_card_corner">20dp</dimen>
+    <dimen name="login_card_padding">24dp</dimen>
+
+    <!-- ─── Typography ───────────────────────────────────── -->
+    <dimen name="text_sm">12sp</dimen>
+    <dimen name="text_md">14sp</dimen>
+    <dimen name="text_lg">16sp</dimen>
+    <dimen name="text_xl">18sp</dimen>
+
+    <!-- ─── Top Bar ──────────────────────────────────────── -->
+    <dimen name="top_bar_height">56dp</dimen>
+    <dimen name="back_icon_size">24dp</dimen>
+
+    <!-- ─── Elevation ────────────────────────────────────── -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="login_card_elevation">12dp</dimen>
+
+    <!-- ─── Batch 02 Dimensions ──────────────────────────── -->
+    <dimen name="search_corner_radius">10dp</dimen>
+    <dimen name="search_height">48dp</dimen>
+    <dimen name="nav_height">64dp</dimen>
+    <dimen name="nav_pill_radius">21dp</dimen>
+    <dimen name="nav_pill_height">42dp</dimen>
+    <dimen name="card_corner_lg">16dp</dimen>
+    <dimen name="card_corner_md">14dp</dimen>
+    <dimen name="card_corner_sm">8dp</dimen>
+    <dimen name="mkt_cat_circle_size">52dp</dimen>
+    <dimen name="service_thumb_size">84dp</dimen>
+    <dimen name="product_image_height">128dp</dimen>
+    <dimen name="home_listing_image_height">175dp</dimen>
+    <dimen name="chip_height">36dp</dimen>
+    <dimen name="chip_radius">18dp</dimen>
+    <dimen name="segmented_height">44dp</dimen>
+    <dimen name="segmented_radius">10dp</dimen>
+
+</resources>
+
