@@ -274,8 +274,9 @@ object ServiceRepository {
         return allUi.filter { item ->
             // Tab filter
             val matchesTab = when (tab) {
-                "REQUESTS" -> item is CommunityServiceItem.Request
-                else -> true
+                "SERVICE_OFFER" -> item is CommunityServiceItem.Offer
+                "HELP_REQUEST", "REQUESTS" -> item is CommunityServiceItem.Request
+                else -> item is CommunityServiceItem.Offer
             }
 
             // Category filter

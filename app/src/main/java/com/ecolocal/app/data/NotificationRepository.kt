@@ -53,7 +53,14 @@ object NotificationRepository {
         addAll(initialNotifications)
     }
 
+    private var appContext: Context? = null
+    private var isInitialSnapshot = true
+    private val presentedNotificationIds = mutableSetOf<String>()
+
     fun init(context: Context) {
+        appContext = context.applicationContext
+        com.ecolocal.app.util.NotificationHelper.createNotificationChannel(context)
+
         if (isInitialized) return
         database = EcoLocalDatabase.getDatabase(context)
         isInitialized = true
@@ -77,6 +84,7 @@ object NotificationRepository {
 
     fun startFirestoreListener() {
         snapshotListener?.remove()
+        isInitialSnapshot = true
 
         val currentUser = auth.currentUser
         val currentUid = currentUser?.uid ?: ""
@@ -110,6 +118,34 @@ object NotificationRepository {
             }
 
             notifyListeners()
+
+            // Prevent re-notifying for old existing notifications on startup
+            if (isInitialSnapshot) {
+                isInitialSnapshot = false
+                snapshot.documents.forEach { doc ->
+                    presentedNotificationIds.add(doc.id)
+                }
+            } else {
+                for (change in snapshot.documentChanges) {
+                    if (change.type == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
+                        val doc = change.document
+                        val notif = NotificationEntity.fromDocument(doc)
+                        if (notif != null && !presentedNotificationIds.contains(notif.id)) {
+                            presentedNotificationIds.add(notif.id)
+                            appContext?.let { ctx ->
+                                com.ecolocal.app.util.NotificationHelper.showSystemNotification(
+                                    context = ctx,
+                                    id = notif.id,
+                                    title = notif.title,
+                                    message = notif.message,
+                                    targetListingId = notif.targetListingId,
+                                    targetConversationId = notif.targetConversationId
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             scope.launch {
                 try {
@@ -173,10 +209,23 @@ object NotificationRepository {
             targetConversationId = targetConversationId
         )
 
+        presentedNotificationIds.add(notif.id)
+
         synchronized(notifications) {
             notifications.add(0, notif)
         }
         notifyListeners()
+
+        appContext?.let { ctx ->
+            com.ecolocal.app.util.NotificationHelper.showSystemNotification(
+                context = ctx,
+                id = notif.id,
+                title = notif.title,
+                message = notif.message,
+                targetListingId = notif.targetListingId,
+                targetConversationId = notif.targetConversationId
+            )
+        }
 
         if (currentUid.isNotEmpty()) {
             firestore.collection(COLLECTION_NOTIFICATIONS)

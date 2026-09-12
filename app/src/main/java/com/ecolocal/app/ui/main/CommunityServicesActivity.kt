@@ -29,7 +29,7 @@ class CommunityServicesActivity : AppCompatActivity() {
     private lateinit var adapter: CommunityServicesAdapter
 
     private var selectedCategory: String = "All"
-    private var selectedTab: String = "ALL" // "ALL" (Offers/Board) or "REQUESTS"
+    private var selectedServiceType: String = "SERVICE_OFFER"
     private var searchQuery: String = ""
 
     private val servicesChangeListener = {
@@ -89,7 +89,7 @@ class CommunityServicesActivity : AppCompatActivity() {
     }
 
     private fun setupServicesList() {
-        val initialItems = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedTab)
+        val initialItems = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedServiceType)
         adapter = CommunityServicesAdapter(
             items = initialItems,
             onItemClick = { item ->
@@ -188,7 +188,7 @@ class CommunityServicesActivity : AppCompatActivity() {
 
     private fun setupSegmentedControl() {
         binding.tabServiceOffers.setOnClickListener {
-            selectedTab = "ALL"
+            selectedServiceType = "SERVICE_OFFER"
             binding.tabServiceOffers.setBackgroundResource(R.drawable.bg_segmented_tab_selected)
             binding.tabServiceOffers.setTextColor(ContextCompat.getColor(this, R.color.eco_text_primary))
             binding.tabHelpRequests.background = null
@@ -197,7 +197,7 @@ class CommunityServicesActivity : AppCompatActivity() {
         }
 
         binding.tabHelpRequests.setOnClickListener {
-            selectedTab = "REQUESTS"
+            selectedServiceType = "HELP_REQUEST"
             binding.tabHelpRequests.setBackgroundResource(R.drawable.bg_segmented_tab_selected)
             binding.tabHelpRequests.setTextColor(ContextCompat.getColor(this, R.color.eco_text_primary))
             binding.tabServiceOffers.background = null
@@ -207,7 +207,7 @@ class CommunityServicesActivity : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val filtered = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedTab)
+        val filtered = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedServiceType)
         if (::adapter.isInitialized) {
             adapter.updateData(filtered)
         }

@@ -74,13 +74,17 @@ class CreatePostTypeActivity : AppCompatActivity() {
 
         binding.btnContinue.setOnClickListener {
             when (selectedType) {
-                PostTypeSelection.OFFER_SERVICE,
+                PostTypeSelection.OFFER_SERVICE -> {
+                    val intent = Intent(this, CreateCommunityServiceActivity::class.java).apply {
+                        putExtra(CreateCommunityServiceActivity.EXTRA_SERVICE_TYPE, "SERVICE_OFFER")
+                    }
+                    createListingLauncher.launch(intent)
+                }
                 PostTypeSelection.REQUEST_HELP -> {
-                    Toast.makeText(
-                        this,
-                        "Service post creation will be implemented in the Community Services creation batch.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val intent = Intent(this, CreateCommunityServiceActivity::class.java).apply {
+                        putExtra(CreateCommunityServiceActivity.EXTRA_SERVICE_TYPE, "HELP_REQUEST")
+                    }
+                    createListingLauncher.launch(intent)
                 }
                 PostTypeSelection.SELL_ITEM,
                 PostTypeSelection.GIVE_AWAY,

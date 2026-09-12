@@ -18,6 +18,10 @@ object UserRepository {
 
     private var cachedProfile: UserProfile? = null
 
+    fun clearCache() {
+        cachedProfile = null
+    }
+
     /**
      * Returns currently cached UserProfile, or builds a fallback profile from FirebaseUser
      * and schedules background fetch.

@@ -23,6 +23,11 @@ import com.ecolocal.app.ui.chat.ConversationsAdapter
 import com.ecolocal.app.ui.marketplace.MarketplaceListingDetailsActivity
 import com.ecolocal.app.ui.notifications.NotificationsActivity
 import com.ecolocal.app.ui.post.CreatePostTypeActivity
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.ecolocal.app.util.BottomNavHelper
 import com.ecolocal.app.util.NavItem
 
@@ -31,6 +36,24 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var nearbyAdapter: NearbyListingAdapter
     private lateinit var chatsAdapter: ConversationsAdapter
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        // No crash regardless of grant state
+    }
+
+    private fun requestNotificationPermissionSafely() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 
     private val staticNearbyListings = listOf(
         NearbyListing(
@@ -114,6 +137,7 @@ class HomeActivity : AppCompatActivity() {
         setupRecentChatsSection()
         setupClickListeners()
         updateHeaderUserInfo()
+        requestNotificationPermissionSafely()
     }
 
     override fun onNewIntent(intent: Intent) {

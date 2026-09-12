@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".EcoLocalApp"
@@ -75,6 +76,12 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ui.post.CreateCommunityServiceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ui.post.PostPreviewActivity"
             android:exported="false"
             android:theme="@style/Theme.EcoLocal.Main"
@@ -94,6 +101,13 @@
 
         <activity
             android:name=".ui.activity.MyActivityActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.EcoLocal.Main"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.profile.ProfileActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.EcoLocal.Main"

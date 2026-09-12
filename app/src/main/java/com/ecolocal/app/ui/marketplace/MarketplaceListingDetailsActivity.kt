@@ -41,6 +41,20 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
         bindListingData()
         updateBookmarkVisual()
         setupClickListeners()
+        binding.scrollDetails.post {
+            binding.scrollDetails.scrollTo(0, 0)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        listingId = intent.getStringExtra(EXTRA_LISTING_ID)
+        bindListingData()
+        updateBookmarkVisual()
+        binding.scrollDetails.post {
+            binding.scrollDetails.scrollTo(0, 0)
+        }
     }
 
     private val detailsChangeListener = {
@@ -98,6 +112,7 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
             return
         }
 
+        binding.ivDetailsHero.setImageDrawable(null)
         ImageLoaderHelper.load(
             binding.ivDetailsHero,
             listing.imageUri,

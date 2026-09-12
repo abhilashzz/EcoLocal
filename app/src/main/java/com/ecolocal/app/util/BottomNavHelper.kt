@@ -127,7 +127,11 @@ object BottomNavHelper {
         }
 
         itemProfile.setOnClickListener {
-            Toast.makeText(activity, "Profile feature coming soon", Toast.LENGTH_SHORT).show()
+            if (selected != NavItem.PROFILE) {
+                navigateTo(com.ecolocal.app.ui.profile.ProfileActivity::class.java)
+            } else {
+                onReselect?.invoke()
+            }
         }
     }
 }

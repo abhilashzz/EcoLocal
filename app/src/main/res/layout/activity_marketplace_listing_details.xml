@@ -130,7 +130,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="4dp"
-                    android:text="For Sale"
+                    tools:text="For Sale"
                     android:textColor="@color/eco_green_primary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Wooden Study Desk"
+                    tools:text="Wooden Study Desk"
                     android:textColor="@color/eco_title_dark"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Rs. 8,500"
+                    tools:text="Rs. 8,500"
                     android:textColor="@color/eco_green_primary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -198,7 +198,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Good"
+                            tools:text="Good"
                             android:textColor="@color/eco_title_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -237,7 +237,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Malabe"
+                            tools:text="Malabe"
                             android:textColor="@color/eco_title_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -276,7 +276,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Available"
+                            tools:text="Available"
                             android:textColor="@color/eco_title_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -300,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:lineSpacingExtra="4dp"
-                    android:text="Used wooden study desk with three drawers. Minor marks from normal use. Perfect for a student or home office setup. Sturdy build and easy to clean."
+                    tools:text="Used wooden study desk with three drawers. Minor marks from normal use. Perfect for a student or home office setup. Sturdy build and easy to clean."
                     android:textColor="@color/eco_secondary_dark"
                     android:textSize="14sp" />
 
@@ -352,7 +352,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Nadeesha Silva"
+                            tools:text="Nadeesha Silva"
                             android:textColor="@color/eco_title_dark"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -362,7 +362,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Member since 2026"
+                            tools:text="Member since 2026"
                             android:textColor="@color/eco_hint_gray"
                             android:textSize="13sp" />
                     </LinearLayout>
