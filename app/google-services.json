@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "233955925366",
+    "project_id": "ecolocal-a2db0",
+    "storage_bucket": "ecolocal-a2db0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233955925366:android:ccade8c5f7196966fa6e57",
+        "android_client_info": {
+          "package_name": "com.ecolocal.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGaYquqlHylMPyeroslDPXjeh5PrGCXug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
