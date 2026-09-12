@@ -1,28 +1,40 @@
 package com.ecolocal.app.data
 
 import android.content.Context
+import android.util.Log
 import com.ecolocal.app.data.local.EcoLocalDatabase
 import com.ecolocal.app.model.entity.NotificationEntity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 /**
- * Repository managing in-app notifications.
+ * Repository managing in-app notifications with Firestore collection "notifications"
+ * and local Room fallback.
  */
 object NotificationRepository {
+
+    private const val TAG = "NotificationRepository"
+    private const val COLLECTION_NOTIFICATIONS = "notifications"
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var database: EcoLocalDatabase? = null
     private var isInitialized = false
 
+    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private var snapshotListener: ListenerRegistration? = null
+    private val changeListeners = mutableListOf<() -> Unit>()
+
     private val initialNotifications = listOf(
         NotificationEntity(
             id = "notif_welcome",
             title = "Welcome to EcoLocal!",
-            message = "Explore nearby sustainable goods and community help services in Malabe.",
+            message = "Explore nearby sustainable goods and community help services in your area.",
             timestamp = System.currentTimeMillis() - 86400000L,
             isRead = false,
             type = "SYSTEM"
@@ -30,7 +42,7 @@ object NotificationRepository {
         NotificationEntity(
             id = "notif_community",
             title = "Community Cleanup Drive",
-            message = "Join the Athurugiriya green initiative this Saturday at 8:00 AM.",
+            message = "Join the suburban green initiative this Saturday at 8:00 AM.",
             timestamp = System.currentTimeMillis() - 43200000L,
             isRead = false,
             type = "COMMUNITY"
@@ -47,26 +59,98 @@ object NotificationRepository {
         isInitialized = true
 
         scope.launch {
-            val dao = database?.notificationDao() ?: return@launch
-            val count = dao.getAll().size
-            if (count == 0) {
-                initialNotifications.forEach { dao.insert(it) }
-            } else {
+            val dao = database?.notificationDao()
+            if (dao != null) {
                 val persisted = dao.getAll()
-                withContext(Dispatchers.Main) {
-                    notifications.clear()
-                    notifications.addAll(persisted)
+                if (persisted.isNotEmpty()) {
+                    synchronized(notifications) {
+                        notifications.clear()
+                        notifications.addAll(persisted)
+                    }
+                    notifyListeners()
+                }
+            }
+        }
+
+        startFirestoreListener()
+    }
+
+    fun startFirestoreListener() {
+        snapshotListener?.remove()
+
+        val currentUser = auth.currentUser
+        val currentUid = currentUser?.uid ?: ""
+
+        val query = if (currentUid.isNotEmpty()) {
+            firestore.collection(COLLECTION_NOTIFICATIONS)
+                .whereEqualTo("userId", currentUid)
+        } else {
+            firestore.collection(COLLECTION_NOTIFICATIONS)
+        }
+
+        snapshotListener = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.w(TAG, "Firestore notifications listener error: ${error.message}")
+                return@addSnapshotListener
+            }
+
+            if (snapshot == null) return@addSnapshotListener
+
+            val remoteNotifs = snapshot.documents.mapNotNull { doc ->
+                NotificationEntity.fromDocument(doc)
+            }.sortedByDescending { it.timestamp }
+
+            synchronized(notifications) {
+                notifications.clear()
+                if (remoteNotifs.isNotEmpty()) {
+                    notifications.addAll(remoteNotifs)
+                } else {
+                    notifications.addAll(initialNotifications)
+                }
+            }
+
+            notifyListeners()
+
+            scope.launch {
+                try {
+                    val dao = database?.notificationDao()
+                    if (dao != null && remoteNotifs.isNotEmpty()) {
+                        remoteNotifs.forEach { dao.insert(it) }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error caching notifications in Room", e)
                 }
             }
         }
     }
 
+    fun addChangeListener(listener: () -> Unit) {
+        synchronized(changeListeners) {
+            if (!changeListeners.contains(listener)) {
+                changeListeners.add(listener)
+            }
+        }
+    }
+
+    fun removeChangeListener(listener: () -> Unit) {
+        synchronized(changeListeners) {
+            changeListeners.remove(listener)
+        }
+    }
+
+    private fun notifyListeners() {
+        scope.launch(Dispatchers.Main) {
+            val callbacks = synchronized(changeListeners) { changeListeners.toList() }
+            callbacks.forEach { it.invoke() }
+        }
+    }
+
     fun getAll(): List<NotificationEntity> {
-        return notifications.toList()
+        return synchronized(notifications) { notifications.toList() }
     }
 
     fun getUnreadCount(): Int {
-        return notifications.count { !it.isRead }
+        return synchronized(notifications) { notifications.count { !it.isRead } }
     }
 
     fun addNotification(
@@ -76,8 +160,10 @@ object NotificationRepository {
         targetListingId: String? = null,
         targetConversationId: String? = null
     ): NotificationEntity {
+        val currentUid = auth.currentUser?.uid ?: ""
         val notif = NotificationEntity(
             id = "notif_${UUID.randomUUID()}",
+            userId = currentUid,
             title = title,
             message = message,
             timestamp = System.currentTimeMillis(),
@@ -87,34 +173,99 @@ object NotificationRepository {
             targetConversationId = targetConversationId
         )
 
-        notifications.add(0, notif)
+        synchronized(notifications) {
+            notifications.add(0, notif)
+        }
+        notifyListeners()
+
+        if (currentUid.isNotEmpty()) {
+            firestore.collection(COLLECTION_NOTIFICATIONS)
+                .document(notif.id)
+                .set(notif.toMap())
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error writing notification to Firestore", e)
+                }
+        }
+
         database?.let { db ->
             scope.launch {
-                db.notificationDao().insert(notif)
+                try {
+                    db.notificationDao().insert(notif)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error inserting notification into Room", e)
+                }
             }
         }
+
         return notif
     }
 
     fun markAsRead(id: String) {
-        val index = notifications.indexOfFirst { it.id == id }
-        if (index != -1) {
-            notifications[index] = notifications[index].copy(isRead = true)
+        synchronized(notifications) {
+            val index = notifications.indexOfFirst { it.id == id }
+            if (index != -1) {
+                notifications[index] = notifications[index].copy(isRead = true)
+            }
         }
+        notifyListeners()
+
+        firestore.collection(COLLECTION_NOTIFICATIONS)
+            .document(id)
+            .update("isRead", true)
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed updating notification isRead in Firestore", e)
+            }
+
         database?.let { db ->
             scope.launch {
-                db.notificationDao().markAsRead(id)
+                try {
+                    db.notificationDao().markAsRead(id)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error updating notification in Room", e)
+                }
             }
         }
     }
 
     fun markAllAsRead() {
-        for (i in notifications.indices) {
-            notifications[i] = notifications[i].copy(isRead = true)
+        synchronized(notifications) {
+            for (i in notifications.indices) {
+                notifications[i] = notifications[i].copy(isRead = true)
+            }
         }
+        notifyListeners()
+
         database?.let { db ->
             scope.launch {
-                db.notificationDao().markAllAsRead()
+                try {
+                    db.notificationDao().markAllAsRead()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error marking all as read in Room", e)
+                }
+            }
+        }
+    }
+
+    fun deleteNotification(id: String) {
+        synchronized(notifications) {
+            notifications.removeAll { it.id == id }
+        }
+        notifyListeners()
+
+        firestore.collection(COLLECTION_NOTIFICATIONS)
+            .document(id)
+            .delete()
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed deleting notification in Firestore", e)
+            }
+
+        database?.let { db ->
+            scope.launch {
+                try {
+                    db.notificationDao().delete(id)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error deleting notification in Room", e)
+                }
             }
         }
     }

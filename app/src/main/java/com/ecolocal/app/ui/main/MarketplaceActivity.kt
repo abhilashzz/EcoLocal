@@ -47,10 +47,27 @@ class MarketplaceActivity : AppCompatActivity() {
         resetScrollToTop()
     }
 
+    private val marketplaceListener = {
+        runOnUiThread {
+            filterProducts()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ListingRepository.addChangeListener(marketplaceListener)
+        filterProducts()
+    }
+
     override fun onResume() {
         super.onResume()
         binding.root.clearFocus()
         filterProducts()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ListingRepository.removeChangeListener(marketplaceListener)
     }
 
     private fun setupBottomNavigation() {
@@ -151,7 +168,10 @@ class MarketplaceActivity : AppCompatActivity() {
         }
 
         binding.ivMarketAvatar.setOnClickListener {
-            Toast.makeText(this, "User Profile", Toast.LENGTH_SHORT).show()
+            val user = com.ecolocal.app.data.UserRepository.getCurrentUser()
+            val name = user?.fullName ?: "Community Member"
+            val loc = if (user?.location.isNullOrEmpty()) "" else " (${user?.location})"
+            Toast.makeText(this, "Profile: $name$loc", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -1,70 +1,141 @@
 package com.ecolocal.app.data
 
 import android.content.Context
-import com.ecolocal.app.R
+import android.util.Log
 import com.ecolocal.app.data.local.EcoLocalDatabase
 import com.ecolocal.app.model.entity.RequestEntity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 /**
- * Repository managing user requests (Marketplace interest & Service help offers).
+ * Repository managing user requests (Marketplace interest & Service help offers)
+ * backed by Cloud Firestore as single source of truth.
  */
 object RequestRepository {
+
+    private const val TAG = "RequestRepository"
+    private const val COLLECTION_REQUESTS = "requests"
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var database: EcoLocalDatabase? = null
     private var isInitialized = false
 
-    private val initialRequests = listOf(
-        RequestEntity(
-            requestId = "req_initial_1",
-            listingId = "books_2",
-            listingTitle = "Textbooks Bundle",
-            listingImageRes = R.drawable.img_mkt_textbooks,
-            ownerName = "Kamal Fernando",
-            requesterName = "Nimal Perera",
-            requestType = "MARKETPLACE_INTEREST",
-            status = "PENDING",
-            location = "Kaduwela",
-            priceOrInfo = "FREE",
-            createdAt = System.currentTimeMillis() - 3600000L
-        )
-    )
+    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private var snapshotListener: ListenerRegistration? = null
+    private val changeListeners = mutableListOf<() -> Unit>()
 
-    private val requests = mutableListOf<RequestEntity>().apply {
-        addAll(initialRequests)
-    }
+    private val requests = mutableListOf<RequestEntity>()
 
     fun init(context: Context) {
         if (isInitialized) return
         database = EcoLocalDatabase.getDatabase(context)
         isInitialized = true
 
+        // Load Room cache first
         scope.launch {
-            val dao = database?.requestDao() ?: return@launch
-            val count = dao.count()
-            if (count == 0) {
-                dao.insert(initialRequests[0])
-            } else {
+            val dao = database?.requestDao()
+            if (dao != null) {
                 val persisted = dao.getAll()
-                withContext(Dispatchers.Main) {
-                    requests.clear()
-                    requests.addAll(persisted)
+                if (persisted.isNotEmpty()) {
+                    synchronized(requests) {
+                        requests.clear()
+                        requests.addAll(persisted)
+                    }
+                    notifyListeners()
+                }
+            }
+        }
+
+        startFirestoreListener()
+    }
+
+    fun startFirestoreListener() {
+        snapshotListener?.remove()
+
+        val currentUser = auth.currentUser
+        val currentUid = currentUser?.uid ?: ""
+
+        val query = if (currentUid.isNotEmpty()) {
+            firestore.collection(COLLECTION_REQUESTS)
+                .whereEqualTo("requesterId", currentUid)
+        } else {
+            firestore.collection(COLLECTION_REQUESTS)
+        }
+
+        snapshotListener = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.w(TAG, "Firestore requests listener error: ${error.message}")
+                return@addSnapshotListener
+            }
+
+            if (snapshot == null) return@addSnapshotListener
+
+            val remoteRequests = snapshot.documents.mapNotNull { doc ->
+                RequestEntity.fromDocument(doc)
+            }.sortedByDescending { it.createdAt }
+
+            synchronized(requests) {
+                requests.clear()
+                requests.addAll(remoteRequests)
+            }
+
+            notifyListeners()
+
+            // Update Room
+            scope.launch {
+                try {
+                    val dao = database?.requestDao()
+                    if (dao != null) {
+                        dao.insertAll(remoteRequests)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error caching requests in Room", e)
                 }
             }
         }
     }
 
+    fun addChangeListener(listener: () -> Unit) {
+        synchronized(changeListeners) {
+            if (!changeListeners.contains(listener)) {
+                changeListeners.add(listener)
+            }
+        }
+    }
+
+    fun removeChangeListener(listener: () -> Unit) {
+        synchronized(changeListeners) {
+            changeListeners.remove(listener)
+        }
+    }
+
+    private fun notifyListeners() {
+        scope.launch(Dispatchers.Main) {
+            val callbacks = synchronized(changeListeners) { changeListeners.toList() }
+            callbacks.forEach { it.invoke() }
+        }
+    }
+
     fun getAll(): List<RequestEntity> {
-        return requests.toList()
+        return synchronized(requests) { requests.toList() }
     }
 
     fun hasRequest(listingId: String, requestType: String): Boolean {
-        return requests.any { it.listingId == listingId && it.requestType == requestType }
+        val currentUid = auth.currentUser?.uid
+        return synchronized(requests) {
+            requests.any {
+                it.listingId == listingId &&
+                    it.requestType == requestType &&
+                    (currentUid == null || it.requesterId == currentUid || it.requesterId.isEmpty()) &&
+                    it.status != "CANCELLED"
+            }
+        }
     }
 
     fun createMarketplaceInterest(
@@ -73,6 +144,7 @@ object RequestRepository {
         imageRes: Int,
         imageUri: String?,
         ownerName: String,
+        ownerId: String = "",
         location: String,
         price: String
     ): Boolean {
@@ -80,14 +152,23 @@ object RequestRepository {
             return false
         }
 
+        val user = auth.currentUser
+        val requesterId = user?.uid ?: "anonymous"
+        val requesterName = UserRepository.getCurrentUser()?.fullName
+            ?: user?.displayName
+            ?: "EcoLocal User"
+
+        val reqId = "req_${UUID.randomUUID()}"
         val newRequest = RequestEntity(
-            requestId = "req_${UUID.randomUUID()}",
+            requestId = reqId,
             listingId = listingId,
+            listingOwnerId = ownerId,
+            requesterId = requesterId,
+            requesterName = requesterName,
             listingTitle = title,
             listingImageRes = imageRes,
             listingImageUri = imageUri,
             ownerName = ownerName,
-            requesterName = "Nimal Perera",
             requestType = "MARKETPLACE_INTEREST",
             status = "PENDING",
             location = location,
@@ -95,12 +176,28 @@ object RequestRepository {
             createdAt = System.currentTimeMillis()
         )
 
-        requests.add(0, newRequest)
+        synchronized(requests) {
+            requests.add(0, newRequest)
+        }
+        notifyListeners()
+
+        firestore.collection(COLLECTION_REQUESTS)
+            .document(reqId)
+            .set(newRequest.toMap())
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed writing request to Firestore", e)
+            }
+
         database?.let { db ->
             scope.launch {
-                db.requestDao().insert(newRequest)
+                try {
+                    db.requestDao().insert(newRequest)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error inserting request in Room", e)
+                }
             }
         }
+
         return true
     }
 
@@ -109,6 +206,7 @@ object RequestRepository {
         serviceTitle: String,
         imageRes: Int,
         ownerName: String,
+        ownerId: String = "",
         location: String,
         category: String
     ): Boolean {
@@ -116,14 +214,23 @@ object RequestRepository {
             return false
         }
 
+        val user = auth.currentUser
+        val requesterId = user?.uid ?: "anonymous"
+        val requesterName = UserRepository.getCurrentUser()?.fullName
+            ?: user?.displayName
+            ?: "EcoLocal User"
+
+        val reqId = "req_${UUID.randomUUID()}"
         val newRequest = RequestEntity(
-            requestId = "req_${UUID.randomUUID()}",
+            requestId = reqId,
             listingId = serviceId,
+            listingOwnerId = ownerId,
+            requesterId = requesterId,
+            requesterName = requesterName,
             listingTitle = serviceTitle,
             listingImageRes = imageRes,
             listingImageUri = null,
             ownerName = ownerName,
-            requesterName = "Nimal Perera",
             requestType = "SERVICE_HELP",
             status = "PENDING",
             location = location,
@@ -131,12 +238,28 @@ object RequestRepository {
             createdAt = System.currentTimeMillis()
         )
 
-        requests.add(0, newRequest)
+        synchronized(requests) {
+            requests.add(0, newRequest)
+        }
+        notifyListeners()
+
+        firestore.collection(COLLECTION_REQUESTS)
+            .document(reqId)
+            .set(newRequest.toMap())
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed writing service request to Firestore", e)
+            }
+
         database?.let { db ->
             scope.launch {
-                db.requestDao().insert(newRequest)
+                try {
+                    db.requestDao().insert(newRequest)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error inserting service request in Room", e)
+                }
             }
         }
+
         return true
     }
 }

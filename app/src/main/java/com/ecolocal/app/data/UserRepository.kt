@@ -1,5 +1,7 @@
 package com.ecolocal.app.data
 
+import com.ecolocal.app.model.UserProfile
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,7 +11,51 @@ object UserRepository {
     private val firestore: FirebaseFirestore
         get() = FirebaseFirestore.getInstance()
 
+    private val auth: FirebaseAuth
+        get() = FirebaseAuth.getInstance()
+
     private const val COLLECTION_USERS = "users"
+
+    private var cachedProfile: UserProfile? = null
+
+    /**
+     * Returns currently cached UserProfile, or builds a fallback profile from FirebaseUser
+     * and schedules background fetch.
+     */
+    fun getCurrentUser(): UserProfile? {
+        if (cachedProfile != null) return cachedProfile
+
+        val firebaseUser = auth.currentUser ?: return null
+        val fallback = UserProfile(
+            uid = firebaseUser.uid,
+            name = firebaseUser.displayName?.takeIf { it.isNotBlank() }
+                ?: firebaseUser.email?.substringBefore("@")
+                ?: "EcoLocal User",
+            email = firebaseUser.email ?: ""
+        )
+        cachedProfile = fallback
+
+        // Background fetch real profile
+        loadUserProfile(firebaseUser.uid)
+
+        return fallback
+    }
+
+    fun loadUserProfile(uid: String, onComplete: ((UserProfile?) -> Unit)? = null) {
+        firestore.collection(COLLECTION_USERS)
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                val profile = UserProfile.fromDocument(doc)
+                if (profile != null) {
+                    cachedProfile = profile
+                }
+                onComplete?.invoke(profile)
+            }
+            .addOnFailureListener {
+                onComplete?.invoke(null)
+            }
+    }
 
     /**
      * Creates a new user profile document in Firestore at users/{uid}.
@@ -40,6 +86,13 @@ object UserRepository {
             "updatedAt" to FieldValue.serverTimestamp()
         )
 
+        cachedProfile = UserProfile(
+            uid = uid,
+            name = name,
+            email = email,
+            locationText = locationText
+        )
+
         firestore.collection(COLLECTION_USERS)
             .document(uid)
             .set(userMap)
@@ -63,10 +116,9 @@ object UserRepository {
         docRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    // Profile already exists; do NOT overwrite!
+                    cachedProfile = UserProfile.fromDocument(documentSnapshot)
                     onComplete(true)
                 } else {
-                    // Profile document is missing; create minimal document safely
                     val fallbackName = user.displayName?.takeIf { it.isNotBlank() }
                         ?: user.email?.substringBefore("@")
                         ?: "EcoLocal User"
@@ -89,13 +141,18 @@ object UserRepository {
                         "updatedAt" to FieldValue.serverTimestamp()
                     )
 
+                    cachedProfile = UserProfile(
+                        uid = user.uid,
+                        name = fallbackName,
+                        email = user.email ?: ""
+                    )
+
                     docRef.set(minimalMap)
                         .addOnSuccessListener { onComplete(true) }
                         .addOnFailureListener { onComplete(false) }
                 }
             }
             .addOnFailureListener {
-                // If offline or failed read, do not block login
                 onComplete(false)
             }
     }

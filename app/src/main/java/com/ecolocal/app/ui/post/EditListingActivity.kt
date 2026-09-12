@@ -126,6 +126,13 @@ class EditListingActivity : AppCompatActivity() {
             return
         }
 
+        val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUid != null && listing.ownerId.isNotEmpty() && listing.ownerId != currentUid) {
+            Toast.makeText(this, "Only the owner can edit this listing", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         selectedImageUri = listing.imageUri
         ImageLoaderHelper.load(binding.ivEditPhotoMain, listing.imageUri, listing.imageRes)
 
@@ -244,9 +251,10 @@ class EditListingActivity : AppCompatActivity() {
             category = category,
             condition = selectedCondition,
             description = description,
-            location = location,
+            locationName = location,
             imageUri = selectedImageUri ?: existing.imageUri,
-            isAvailable = isAvailable
+            isAvailable = isAvailable,
+            updatedAt = System.currentTimeMillis()
         )
 
         ListingRepository.update(updated)

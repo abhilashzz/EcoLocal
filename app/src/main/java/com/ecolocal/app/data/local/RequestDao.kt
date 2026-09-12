@@ -21,6 +21,9 @@ interface RequestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(request: RequestEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(requests: List<RequestEntity>)
+
     @Update
     suspend fun update(request: RequestEntity)
 

@@ -14,6 +14,8 @@ import com.ecolocal.app.adapter.CommunityServicesAdapter
 import com.ecolocal.app.data.ChatRepository
 import com.ecolocal.app.data.NotificationRepository
 import com.ecolocal.app.data.RequestRepository
+import com.ecolocal.app.data.ServiceRepository
+import com.ecolocal.app.data.UserRepository
 import com.ecolocal.app.databinding.ActivityCommunityServicesBinding
 import com.ecolocal.app.model.CommunityServiceItem
 import com.ecolocal.app.ui.chat.ChatActivity
@@ -30,108 +32,18 @@ class CommunityServicesActivity : AppCompatActivity() {
     private var selectedTab: String = "ALL" // "ALL" (Offers/Board) or "REQUESTS"
     private var searchQuery: String = ""
 
-    private val allItems = listOf(
-        CommunityServiceItem.Offer(
-            id = "srv_1",
-            title = "Science & Maths Tutor",
-            location = "Malabe",
-            price = "Rs. 1,500/session",
-            status = "Available",
-            imageRes = R.drawable.img_service_tutor,
-            providerName = "Kamal Fernando",
-            category = "Tutoring"
-        ),
-        CommunityServiceItem.Request(
-            id = "srv_2",
-            title = "Need help fixing a leaking tap",
-            location = "Kaduwela",
-            timeText = "Needed this week",
-            requesterName = "Saman Kumara",
-            category = "Repairs",
-            imageRes = R.drawable.img_service_lawn
-        ),
-        CommunityServiceItem.Offer(
-            id = "srv_3",
-            title = "Weekend Lawn Mowing",
-            location = "Rajagiriya",
-            price = "Rs. 800/hr",
-            status = "Available",
-            imageRes = R.drawable.img_service_lawn,
-            providerName = "Nadeesha Silva",
-            category = "Gardening"
-        ),
-        CommunityServiceItem.Request(
-            id = "srv_4",
-            title = "Physics A/L revision guidance",
-            location = "Malabe",
-            timeText = "Needed urgently",
-            requesterName = "Chamara Perera",
-            category = "Tutoring",
-            imageRes = R.drawable.img_service_tutor
-        ),
-        CommunityServiceItem.Offer(
-            id = "srv_5",
-            title = "Electric Fan & Appliance Repairs",
-            location = "Battaramulla",
-            price = "Rs. 1,000/job",
-            status = "Available",
-            imageRes = R.drawable.img_service_tutor,
-            providerName = "Sunil Wickrama",
-            category = "Repairs"
-        ),
-        CommunityServiceItem.Request(
-            id = "srv_6",
-            title = "Garden weeding and clearing help",
-            location = "Athurugiriya",
-            timeText = "This Saturday",
-            requesterName = "Priya Jayasuriya",
-            category = "Gardening",
-            imageRes = R.drawable.img_service_lawn
-        ),
-        CommunityServiceItem.Offer(
-            id = "srv_7",
-            title = "English Conversational Practice",
-            location = "Nugegoda",
-            price = "FREE",
-            status = "Available",
-            imageRes = R.drawable.img_service_tutor,
-            providerName = "Sanduni Alwis",
-            category = "Tutoring"
-        ),
-        CommunityServiceItem.Request(
-            id = "srv_8",
-            title = "Bicycle brake repair assistance",
-            location = "Kaduwela",
-            timeText = "Flexible",
-            requesterName = "Dinesh Bandara",
-            category = "Repairs",
-            imageRes = R.drawable.img_service_lawn
-        ),
-        CommunityServiceItem.Offer(
-            id = "srv_9",
-            title = "Organic Home Compost Supply",
-            location = "Malabe",
-            price = "FREE",
-            status = "Available",
-            imageRes = R.drawable.img_service_lawn,
-            providerName = "Ranjith Silva",
-            category = "Gardening"
-        ),
-        CommunityServiceItem.Request(
-            id = "srv_10",
-            title = "Moving heavy boxes to upstairs store",
-            location = "Rajagiriya",
-            timeText = "Tomorrow evening",
-            requesterName = "Kasun Fernando",
-            category = "Volunteering",
-            imageRes = R.drawable.img_service_lawn
-        )
-    )
+    private val servicesChangeListener = {
+        runOnUiThread {
+            applyFilters()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommunityServicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ServiceRepository.init(this)
 
         setupBottomNavigation()
         setupServicesList()
@@ -139,6 +51,22 @@ class CommunityServicesActivity : AppCompatActivity() {
         setupSegmentedControl()
         setupSearch()
         setupClickListeners()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ServiceRepository.addChangeListener(servicesChangeListener)
+        applyFilters()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyFilters()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ServiceRepository.removeChangeListener(servicesChangeListener)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -161,8 +89,9 @@ class CommunityServicesActivity : AppCompatActivity() {
     }
 
     private fun setupServicesList() {
+        val initialItems = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedTab)
         adapter = CommunityServicesAdapter(
-            items = allItems,
+            items = initialItems,
             onItemClick = { item ->
                 handleItemClick(item)
             },
@@ -278,45 +207,10 @@ class CommunityServicesActivity : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val filtered = allItems.filter { item ->
-            // Tab filter
-            val matchesTab = when (selectedTab) {
-                "REQUESTS" -> item is CommunityServiceItem.Request
-                else -> true // "ALL" shows offers and requests together as in Figma
-            }
-
-            // Category filter
-            val itemCategory = when (item) {
-                is CommunityServiceItem.Offer -> item.category
-                is CommunityServiceItem.Request -> item.category
-            }
-            val matchesCategory = if (selectedCategory.equals("All", ignoreCase = true)) {
-                true
-            } else {
-                itemCategory.equals(selectedCategory, ignoreCase = true)
-            }
-
-            // Search query filter
-            val matchesSearch = if (searchQuery.isEmpty()) {
-                true
-            } else {
-                val title = when (item) {
-                    is CommunityServiceItem.Offer -> item.title
-                    is CommunityServiceItem.Request -> item.title
-                }
-                val location = when (item) {
-                    is CommunityServiceItem.Offer -> item.location
-                    is CommunityServiceItem.Request -> item.location
-                }
-                title.contains(searchQuery, ignoreCase = true) ||
-                location.contains(searchQuery, ignoreCase = true) ||
-                itemCategory.contains(searchQuery, ignoreCase = true)
-            }
-
-            matchesTab && matchesCategory && matchesSearch
+        val filtered = ServiceRepository.searchAndFilter(searchQuery, selectedCategory, selectedTab)
+        if (::adapter.isInitialized) {
+            adapter.updateData(filtered)
         }
-
-        adapter.updateData(filtered)
     }
 
     private fun setupClickListeners() {
@@ -325,7 +219,10 @@ class CommunityServicesActivity : AppCompatActivity() {
         }
 
         binding.ivServicesAvatar.setOnClickListener {
-            Toast.makeText(this, "Logged in as Nimal Perera (Malabe)", Toast.LENGTH_SHORT).show()
+            val user = UserRepository.getCurrentUser()
+            val name = user?.fullName ?: "Community Member"
+            val loc = if (user?.location.isNullOrEmpty()) "" else " (${user?.location})"
+            Toast.makeText(this, "Logged in as $name$loc", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -45,9 +45,30 @@ class MyActivityActivity : AppCompatActivity() {
         refreshData()
     }
 
+    private val activityDataObserver = {
+        runOnUiThread {
+            refreshData()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ListingRepository.addChangeListener(activityDataObserver)
+        RequestRepository.addChangeListener(activityDataObserver)
+        SavedRepository.addChangeListener(activityDataObserver)
+        refreshData()
+    }
+
     override fun onResume() {
         super.onResume()
         refreshData()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ListingRepository.removeChangeListener(activityDataObserver)
+        RequestRepository.removeChangeListener(activityDataObserver)
+        SavedRepository.removeChangeListener(activityDataObserver)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -85,13 +106,23 @@ class MyActivityActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onEditClick = { listing ->
-                val intent = Intent(this, EditListingActivity::class.java).apply {
-                    putExtra(EditListingActivity.EXTRA_LISTING_ID, listing.id)
+                val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                if (currentUid != null && listing.ownerId.isNotEmpty() && listing.ownerId != currentUid) {
+                    Toast.makeText(this, "You can only edit your own posts", Toast.LENGTH_SHORT).show()
+                } else {
+                    val intent = Intent(this, EditListingActivity::class.java).apply {
+                        putExtra(EditListingActivity.EXTRA_LISTING_ID, listing.id)
+                    }
+                    startActivity(intent)
                 }
-                startActivity(intent)
             },
             onDeleteClick = { listing ->
-                showDeleteConfirmationDialog(listing)
+                val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                if (currentUid != null && listing.ownerId.isNotEmpty() && listing.ownerId != currentUid) {
+                    Toast.makeText(this, "You can only delete your own posts", Toast.LENGTH_SHORT).show()
+                } else {
+                    showDeleteConfirmationDialog(listing)
+                }
             }
         )
         binding.rvMyPosts.layoutManager = LinearLayoutManager(this)
@@ -198,7 +229,8 @@ class MyActivityActivity : AppCompatActivity() {
     }
 
     private fun refreshPostsData() {
-        val userPosts = ListingRepository.getUserPosts("user_nimal")
+        val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val userPosts = ListingRepository.getUserPosts(currentUid)
         if (userPosts.isEmpty()) {
             binding.rvMyPosts.visibility = View.GONE
             binding.layoutEmptyPosts.visibility = View.VISIBLE

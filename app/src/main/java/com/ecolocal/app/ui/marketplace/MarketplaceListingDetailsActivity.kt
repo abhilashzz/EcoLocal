@@ -43,6 +43,23 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
         setupClickListeners()
     }
 
+    private val detailsChangeListener = {
+        runOnUiThread {
+            val id = listingId
+            if (id == null || ListingRepository.getById(id) == null) {
+                finish()
+            } else {
+                bindListingData()
+                updateBookmarkVisual()
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ListingRepository.addChangeListener(detailsChangeListener)
+    }
+
     override fun onResume() {
         super.onResume()
         // If the listing was deleted from EditListingActivity, finish immediately
@@ -53,6 +70,11 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
         }
         bindListingData()
         updateBookmarkVisual()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ListingRepository.removeChangeListener(detailsChangeListener)
     }
 
     private fun updateBookmarkVisual() {
@@ -160,6 +182,7 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
                 imageRes = listing.imageRes,
                 imageUri = listing.imageUri,
                 ownerName = listing.sellerName,
+                ownerId = listing.ownerId,
                 location = listing.location,
                 price = listing.price
             )
@@ -209,6 +232,12 @@ class MarketplaceListingDetailsActivity : AppCompatActivity() {
 
     private fun openEditListing() {
         val id = listingId ?: return
+        val listing = ListingRepository.getById(id) ?: return
+        val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUid != null && listing.ownerId.isNotEmpty() && listing.ownerId != currentUid) {
+            Toast.makeText(this, "Only the owner can edit this listing", Toast.LENGTH_SHORT).show()
+            return
+        }
         val intent = Intent(this, EditListingActivity::class.java).apply {
             putExtra(EditListingActivity.EXTRA_LISTING_ID, id)
         }

@@ -43,12 +43,32 @@ class ChatActivity : AppCompatActivity() {
         loadMessages()
     }
 
+    private val messageObserver = {
+        runOnUiThread {
+            loadMessages()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        conversationId?.let { id ->
+            ChatRepository.attachMessageListener(id, messageObserver)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         conversationId?.let {
             ChatRepository.markConversationAsRead(it)
         }
         loadMessages()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        conversationId?.let { id ->
+            ChatRepository.detachMessageListener(id, messageObserver)
+        }
     }
 
     private fun setupHeader() {

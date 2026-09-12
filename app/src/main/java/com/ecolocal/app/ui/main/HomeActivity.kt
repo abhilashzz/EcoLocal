@@ -113,6 +113,7 @@ class HomeActivity : AppCompatActivity() {
         setupNearbyRecentSection()
         setupRecentChatsSection()
         setupClickListeners()
+        updateHeaderUserInfo()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -121,10 +122,45 @@ class HomeActivity : AppCompatActivity() {
         resetScrollToTop()
     }
 
+    private val homeDataObserver = {
+        runOnUiThread {
+            refreshNearbyRecentListings()
+            refreshRecentChats()
+            updateHeaderUserInfo()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ListingRepository.addChangeListener(homeDataObserver)
+        ChatRepository.addConversationObserver(homeDataObserver)
+        refreshNearbyRecentListings()
+        refreshRecentChats()
+        updateHeaderUserInfo()
+    }
+
     override fun onResume() {
         super.onResume()
         refreshNearbyRecentListings()
         refreshRecentChats()
+        updateHeaderUserInfo()
+    }
+
+    private fun updateHeaderUserInfo() {
+        val user = com.ecolocal.app.data.UserRepository.getCurrentUser()
+        val firstName = user?.fullName?.split(" ")?.firstOrNull()?.takeIf { it.isNotBlank() } ?: "Neighbor"
+        binding.tvGreeting.text = "Good morning, $firstName"
+        if (!user?.location.isNullOrEmpty()) {
+            binding.tvLocation.text = user?.location
+        } else {
+            binding.tvLocation.text = "Location not set"
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ListingRepository.removeChangeListener(homeDataObserver)
+        ChatRepository.removeConversationObserver(homeDataObserver)
     }
 
     private fun setupBottomNavigation() {
@@ -191,7 +227,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun buildCombinedNearbyListings(): List<NearbyListing> {
-        val dynamicListings = ListingRepository.getAll().map { item ->
+        return ListingRepository.getAll().map { item ->
             NearbyListing(
                 id = item.id,
                 title = item.title,
@@ -205,7 +241,6 @@ class HomeActivity : AppCompatActivity() {
                 imageUri = item.imageUri
             )
         }
-        return dynamicListings + staticNearbyListings
     }
 
     private fun refreshNearbyRecentListings() {
@@ -273,7 +308,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.ivHomeAvatar.setOnClickListener {
-            Toast.makeText(this, "Profile: Nimal Perera (Malabe)", Toast.LENGTH_SHORT).show()
+            val user = com.ecolocal.app.data.UserRepository.getCurrentUser()
+            val name = user?.fullName ?: "Community Member"
+            val loc = if (user?.location.isNullOrEmpty()) "" else " (${user?.location})"
+            Toast.makeText(this, "Profile: $name$loc", Toast.LENGTH_SHORT).show()
         }
     }
 

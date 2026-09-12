@@ -6,13 +6,15 @@ import com.ecolocal.app.data.ListingRepository
 import com.ecolocal.app.data.NotificationRepository
 import com.ecolocal.app.data.RequestRepository
 import com.ecolocal.app.data.SavedRepository
+import com.ecolocal.app.data.ServiceRepository
 
 class EcoLocalApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Initialize Room-backed repositories
+        // Initialize online repositories
         ListingRepository.init(this)
+        ServiceRepository.init(this)
         SavedRepository.init(this)
         RequestRepository.init(this)
         NotificationRepository.init(this)

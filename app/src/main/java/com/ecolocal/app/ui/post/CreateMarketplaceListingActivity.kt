@@ -12,9 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.ecolocal.app.R
 import com.ecolocal.app.data.ListingRepository
+import com.ecolocal.app.data.UserRepository
 import com.ecolocal.app.databinding.ActivityCreateMarketplaceListingBinding
 import com.ecolocal.app.model.MarketplaceListing
 import com.ecolocal.app.util.ImageLoaderHelper
+import com.google.firebase.auth.FirebaseAuth
 
 class CreateMarketplaceListingActivity : AppCompatActivity() {
 
@@ -235,9 +237,16 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
         val id = currentListingId ?: "listing_${System.currentTimeMillis()}"
         currentListingId = id
 
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val ownerId = currentUser?.uid ?: "user_anonymous"
+        val profile = UserRepository.getCurrentUser()
+        val ownerName = profile?.fullName
+            ?: currentUser?.displayName
+            ?: "EcoLocal User"
+
         val listing = MarketplaceListing(
             id = id,
-            ownerId = "user_nimal",
+            ownerId = ownerId,
             listingType = listingTypeBadge,
             title = title,
             price = formattedPrice,
@@ -249,9 +258,10 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
             imageUri = selectedImageUri,
             secondaryImageRes = 0,
             isAvailable = isAvailable,
-            sellerName = "Nimal Perera",
-            sellerAvatarRes = R.drawable.img_avatar_nimal,
-            memberSince = "Member since 2026"
+            sellerName = ownerName,
+            sellerAvatarRes = 0,
+            memberSince = "Member since 2026",
+            status = "ACTIVE"
         )
 
         // Save into ListingRepository as single source of truth
