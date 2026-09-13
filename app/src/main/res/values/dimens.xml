@@ -20,6 +20,7 @@
 
     <!-- ─── Input Fields ─────────────────────────────────── -->
     <dimen name="input_height">52dp</dimen>
+    <dimen name="input_field_height">52dp</dimen>
     <dimen name="input_corner_radius">10dp</dimen>
     <dimen name="input_stroke_width">1dp</dimen>
     <dimen name="input_padding_horizontal">16dp</dimen>

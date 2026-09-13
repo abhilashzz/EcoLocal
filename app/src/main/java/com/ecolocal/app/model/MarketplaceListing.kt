@@ -123,6 +123,20 @@ data class MarketplaceListing(
         )
     }
 
+    fun toMarketProduct(): MarketProduct {
+        return MarketProduct(
+            id = listingId,
+            title = title,
+            price = price,
+            condition = if (condition.contains("Condition", ignoreCase = true)) condition else "$condition Condition",
+            location = locationName,
+            imageRes = imageRes,
+            imageUri = imageUrl ?: imageUri,
+            isGiveaway = listingType.equals("GIVE AWAY", ignoreCase = true) || price.equals("FREE", ignoreCase = true),
+            isFavorite = false
+        )
+    }
+
     companion object {
         fun fromDocument(doc: DocumentSnapshot): MarketplaceListing? {
             if (!doc.exists()) return null
@@ -139,9 +153,10 @@ data class MarketplaceListing(
                 val locationName = doc.getString("locationName") ?: doc.getString("location") ?: ""
                 val latitude = doc.getDouble("latitude")
                 val longitude = doc.getDouble("longitude")
-                val imageUrl = doc.getString("imageUrl")
+                val rawImageUrl = doc.getString("imageUrl") ?: doc.getString("imageUri")
+                val imageUrl = rawImageUrl
                 val imageRes = doc.getLong("imageRes")?.toInt() ?: 0
-                val imageUri = doc.getString("imageUri")
+                val imageUri = rawImageUrl
                 val secondaryImageRes = doc.getLong("secondaryImageRes")?.toInt()
                 val isAvailable = doc.getBoolean("isAvailable") ?: true
                 val status = doc.getString("status") ?: "ACTIVE"

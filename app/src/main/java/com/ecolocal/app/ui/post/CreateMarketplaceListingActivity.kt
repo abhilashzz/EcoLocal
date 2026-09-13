@@ -10,13 +10,16 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.ecolocal.app.R
 import com.ecolocal.app.data.ListingRepository
 import com.ecolocal.app.data.UserRepository
 import com.ecolocal.app.databinding.ActivityCreateMarketplaceListingBinding
 import com.ecolocal.app.model.MarketplaceListing
+import com.ecolocal.app.util.CloudinaryHelper
 import com.ecolocal.app.util.ImageLoaderHelper
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class CreateMarketplaceListingActivity : AppCompatActivity() {
 
@@ -39,22 +42,35 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
             }
         }
 
+    private var uploadedImageUrl: String? = null
+    private var isUploadingPhoto = false
+
     private val photoPickerLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                try {
-                    contentResolver.takePersistableUriPermission(
-                        it,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                } catch (e: Exception) {
-                    // Ignore if persistable permission is not supported
-                }
-                selectedImageUri = it.toString()
-                binding.containerPhotoMain.visibility = View.VISIBLE
-                ImageLoaderHelper.load(binding.ivPhotoMain, selectedImageUri, R.drawable.img_mkt_desk)
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            uri?.let { onPhotoSelected(it) }
+        }
+
+    private fun onPhotoSelected(uri: Uri) {
+        binding.containerPhotoMain.visibility = View.VISIBLE
+        binding.ivPhotoMain.setImageURI(uri)
+        isUploadingPhoto = true
+        Toast.makeText(this, "Uploading image to Cloudinary...", Toast.LENGTH_SHORT).show()
+
+        lifecycleScope.launch {
+            val result = CloudinaryHelper.uploadImage(this@CreateMarketplaceListingActivity, uri)
+            isUploadingPhoto = false
+            if (result.isSuccess) {
+                val url = result.getOrNull()
+                uploadedImageUrl = url
+                selectedImageUri = url
+                Toast.makeText(this@CreateMarketplaceListingActivity, "Image uploaded successfully!", Toast.LENGTH_SHORT).show()
+                ImageLoaderHelper.load(binding.ivPhotoMain, url, R.drawable.img_mkt_desk)
+            } else {
+                val err = result.exceptionOrNull()?.message ?: "Upload failed"
+                Toast.makeText(this@CreateMarketplaceListingActivity, "Upload failed: $err", Toast.LENGTH_LONG).show()
             }
         }
+    }
 
     private val categories = arrayOf(
         "Select category",
@@ -164,11 +180,11 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
         }
 
         binding.cardAddPhoto.setOnClickListener {
-            photoPickerLauncher.launch("image/*")
+            photoPickerLauncher.launch(androidx.activity.result.PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.containerPhotoMain.setOnClickListener {
-            photoPickerLauncher.launch("image/*")
+            photoPickerLauncher.launch(androidx.activity.result.PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.btnCreatePreview.setOnClickListener {
@@ -179,6 +195,11 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
     private fun validateAndProceedToPreview() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
         currentFocus?.let { imm?.hideSoftInputFromWindow(it.windowToken, 0) }
+
+        if (isUploadingPhoto) {
+            Toast.makeText(this, "Please wait, photo is still uploading...", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val title = binding.etCreateTitle.text.toString().trim()
         val rawPrice = binding.etCreatePrice.text.toString().trim()
@@ -244,6 +265,7 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
             ?: currentUser?.displayName
             ?: "EcoLocal User"
 
+        val finalImageUrl = uploadedImageUrl ?: selectedImageUri
         val listing = MarketplaceListing(
             id = id,
             ownerId = ownerId,
@@ -254,8 +276,9 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
             condition = selectedCondition ?: "Good",
             description = description,
             location = location,
-            imageRes = if (selectedImageUri == null) R.drawable.img_mkt_desk else 0,
-            imageUri = selectedImageUri,
+            imageUrl = finalImageUrl,
+            imageUri = finalImageUrl,
+            imageRes = if (finalImageUrl.isNullOrEmpty()) R.drawable.img_mkt_desk else 0,
             secondaryImageRes = 0,
             isAvailable = isAvailable,
             sellerName = ownerName,
@@ -292,8 +315,10 @@ class CreateMarketplaceListingActivity : AppCompatActivity() {
         binding.etCreateLocation.setText(listing.location)
         binding.switchCreateAvailable.isChecked = listing.isAvailable
 
-        if (!listing.imageUri.isNullOrEmpty()) {
-            selectedImageUri = listing.imageUri
+        val existingImg = listing.imageUrl ?: listing.imageUri
+        if (!existingImg.isNullOrEmpty()) {
+            selectedImageUri = existingImg
+            uploadedImageUrl = listing.imageUrl
             binding.containerPhotoMain.visibility = View.VISIBLE
             ImageLoaderHelper.load(binding.ivPhotoMain, selectedImageUri, listing.imageRes)
         } else if (listing.imageRes != 0) {

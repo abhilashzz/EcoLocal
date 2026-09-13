@@ -248,6 +248,69 @@
                 android:nestedScrollingEnabled="false"
                 android:orientation="horizontal" />
 
+            <!-- Section: EcoMatch Smart Suggestions -->
+            <RelativeLayout
+                android:id="@+id/layout_ecomatch_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="EcoMatch For You"
+                            android:textColor="@color/eco_title_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_sale"
+                            android:backgroundTint="@color/eco_green_primary"
+                            android:paddingStart="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="6dp"
+                            android:paddingBottom="2dp"
+                            android:text="AI SMART"
+                            android:textColor="#FFFFFF"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Personalized suggestions from your local activity"
+                        android:textColor="@color/eco_secondary_dark"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- EcoMatch Horizontal Suggestions Row -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ecomatch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal" />
+
             <!-- Section: Nearby & Recent -->
             <TextView
                 android:layout_width="wrap_content"

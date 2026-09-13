@@ -10,6 +10,7 @@
 
     <!-- Circular icon container -->
     <FrameLayout
+        android:id="@+id/fl_cat_circle"
         android:layout_width="@dimen/mkt_cat_circle_size"
         android:layout_height="@dimen/mkt_cat_circle_size"
         android:background="@drawable/bg_mkt_cat_circle">

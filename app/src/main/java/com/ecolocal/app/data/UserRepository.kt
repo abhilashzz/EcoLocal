@@ -160,4 +160,115 @@ object UserRepository {
                 onComplete(false)
             }
     }
+
+    private val profileChangeListeners = mutableListOf<() -> Unit>()
+
+    fun addProfileChangeListener(listener: () -> Unit) {
+        synchronized(profileChangeListeners) {
+            if (!profileChangeListeners.contains(listener)) {
+                profileChangeListeners.add(listener)
+            }
+        }
+    }
+
+    fun removeProfileChangeListener(listener: () -> Unit) {
+        synchronized(profileChangeListeners) {
+            profileChangeListeners.remove(listener)
+        }
+    }
+
+    fun notifyProfileChanged() {
+        val listeners = synchronized(profileChangeListeners) { profileChangeListeners.toList() }
+        listeners.forEach { it.invoke() }
+    }
+
+    /**
+     * Saves user profile updates to users/{uid} and updates Firebase Auth displayName.
+     */
+    fun updateUserProfile(
+        uid: String,
+        name: String,
+        phone: String,
+        address: String,
+        city: String,
+        country: String,
+        locationText: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val updates = hashMapOf<String, Any?>(
+            "name" to name,
+            "phone" to phone,
+            "address" to address,
+            "city" to city,
+            "country" to country,
+            "locationText" to locationText,
+            "updatedAt" to FieldValue.serverTimestamp()
+        )
+
+        firestore.collection(COLLECTION_USERS)
+            .document(uid)
+            .set(updates, com.google.firebase.firestore.SetOptions.merge())
+            .addOnSuccessListener {
+                val authUser = auth.currentUser
+                if (authUser != null && name.isNotBlank() && authUser.displayName != name) {
+                    val profileChange = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+                    authUser.updateProfile(profileChange)
+                }
+
+                val prev = cachedProfile
+                if (prev != null) {
+                    cachedProfile = prev.copy(
+                        name = name,
+                        phone = phone,
+                        address = address,
+                        city = city,
+                        country = country,
+                        locationText = locationText
+                    )
+                } else {
+                    cachedProfile = UserProfile(
+                        uid = uid,
+                        name = name,
+                        phone = phone,
+                        address = address,
+                        city = city,
+                        country = country,
+                        locationText = locationText
+                    )
+                }
+                notifyProfileChanged()
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
+
+    fun updateProfilePhoto(
+        uid: String,
+        profileImageUrl: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        firestore.collection(COLLECTION_USERS)
+            .document(uid)
+            .set(
+                mapOf(
+                    "profileImageUrl" to profileImageUrl,
+                    "updatedAt" to FieldValue.serverTimestamp()
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+            .addOnSuccessListener {
+                cachedProfile = cachedProfile?.copy(profileImageUrl = profileImageUrl)
+                notifyProfileChanged()
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
 }

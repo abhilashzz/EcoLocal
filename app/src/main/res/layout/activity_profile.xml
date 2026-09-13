@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:paddingEnd="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -26,6 +26,20 @@
             android:textColor="@color/eco_title_dark"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btn_profile_settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Settings"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_settings"
+            app:tint="@color/eco_title_dark" />
     </RelativeLayout>
 
     <!-- Scrollable Profile Content -->
@@ -54,24 +68,50 @@
                 android:elevation="1dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp">
+                android:paddingStart="16dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="20dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/iv_profile_avatar"
-                    android:layout_width="84dp"
-                    android:layout_height="84dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/img_avatar_nimal"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle"
-                    app:strokeColor="@color/eco_green_primary"
-                    app:strokeWidth="2dp" />
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_profile_avatar"
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_avatar_nimal"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle"
+                        app:strokeColor="@color/eco_green_primary"
+                        app:strokeWidth="2dp" />
+
+                    <FrameLayout
+                        android:id="@+id/btn_profile_change_photo"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_circle_button"
+                        android:backgroundTint="@color/eco_green_primary"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Change Photo"
+                            android:src="@drawable/ic_camera_plus"
+                            app:tint="#FFFFFF" />
+                    </FrameLayout>
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tv_profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/eco_title_dark"
                     android:textSize="18sp"
@@ -94,20 +134,107 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_nav_selected_pill"
                     android:paddingStart="12dp"
-                    android:paddingTop="4dp"
+                    android:paddingTop="3dp"
                     android:paddingEnd="12dp"
-                    android:paddingBottom="4dp"
+                    android:paddingBottom="3dp"
                     android:textColor="@color/eco_green_primary"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     tools:text="Malabe, Sri Lanka" />
+
+                <!-- Badges: Rating & EcoPoints -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <!-- Rating badge -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_profile_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/eco_green_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="No ratings yet" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="1dp" />
+
+                    <!-- EcoPoints badge -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_available"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="5dp">
+
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="4dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_leaf"
+                            app:tint="@color/eco_green_primary" />
+
+                        <TextView
+                            android:id="@+id/tv_profile_ecopoints"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/eco_green_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="0 EcoPoints • New Member" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Edit Profile Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_edit_profile"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Edit Profile"
+                    android:textColor="@color/eco_green_primary"
+                    android:textSize="14sp"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_edit"
+                    app:iconGravity="textStart"
+                    app:iconPadding="6dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/eco_green_primary"
+                    app:strokeColor="@color/eco_green_primary"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
 
             <!-- Account Details Card -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="Account Details"
                 android:textColor="@color/eco_title_dark"
@@ -126,7 +253,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="14dp">
 
-                <!-- Full Name Row -->
+                <!-- Display Name Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -190,6 +317,102 @@
                     android:layout_marginBottom="10dp"
                     android:background="@color/eco_card_border_subtle" />
 
+                <!-- Phone Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Phone"
+                        android:textColor="@color/eco_hint_gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/eco_title_dark"
+                        android:textSize="14sp"
+                        tools:text="+94 77 123 4567" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/eco_card_border_subtle" />
+
+                <!-- Address Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Address"
+                        android:textColor="@color/eco_hint_gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/eco_title_dark"
+                        android:textSize="14sp"
+                        tools:text="124 Main Street" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/eco_card_border_subtle" />
+
+                <!-- City / Country Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="City / Country"
+                        android:textColor="@color/eco_hint_gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_city_country"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/eco_title_dark"
+                        android:textSize="14sp"
+                        tools:text="Malabe, Sri Lanka" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/eco_card_border_subtle" />
+
                 <!-- Location Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -201,7 +424,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Location"
+                        android:text="Area / Neighborhood"
                         android:textColor="@color/eco_hint_gray"
                         android:textSize="14sp" />
 
@@ -249,12 +472,51 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Logout Section -->
+            <!-- Settings Button -->
+            <LinearLayout
+                android:id="@+id/btn_settings_entry"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_market_card_white"
+                android:clickable="true"
+                android:elevation="1dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="Settings"
+                    android:src="@drawable/ic_settings"
+                    app:tint="@color/eco_title_dark" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Settings &amp; Theme"
+                    android:textColor="@color/eco_title_dark"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/eco_hint_gray" />
+            </LinearLayout>
+
+            <!-- Logout Button -->
             <LinearLayout
                 android:id="@+id/btn_logout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/bg_market_card_white"
                 android:clickable="true"
                 android:elevation="1dp"

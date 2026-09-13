@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Colors for EcoLocal -->
+    <color name="eco_bg_screen">#121714</color>
+    <color name="eco_background_cream">#181F1A</color>
+    <color name="eco_background_white">#1E2621</color>
+    <color name="eco_card_white">#1E2621</color>
+    <color name="eco_card_bg">#1E2621</color>
+
+    <color name="eco_title_dark">#F0F4F1</color>
+    <color name="eco_secondary_dark">#A3B2A8</color>
+    <color name="eco_text_primary">#F0F4F1</color>
+    <color name="eco_text_secondary">#A3B2A8</color>
+    <color name="eco_text_hint">#728178</color>
+    <color name="eco_hint_gray">#7E8F85</color>
+
+    <color name="eco_search_border">#313F36</color>
+    <color name="eco_card_border_subtle">#27342C</color>
+    <color name="eco_input_bg">#232C26</color>
+    <color name="eco_input_border">#37463D</color>
+    <color name="eco_divider">#2A362F</color>
+
+    <color name="eco_mkt_cat_circle_bg">#252F28</color>
+    <color name="eco_mkt_cat_icon">#C8D7CD</color>
+
+    <color name="eco_nav_pill_bg">#253E31</color>
+    <color name="eco_nav_selected_text">#6CE0A6</color>
+    <color name="eco_nav_unselected">#8A9C91</color>
+
+    <color name="eco_chip_selected_bg">#2D6A4F</color>
+    <color name="eco_chip_selected_text">#FFFFFF</color>
+    <color name="eco_chip_unselected_bg">#223329</color>
+    <color name="eco_chip_unselected_text">#72D4A3</color>
+
+    <color name="eco_green_light">#1E362A</color>
+    <color name="eco_status_bar_welcome">#181F1A</color>
+    <color name="eco_status_bar_white">#1E2621</color>
+
+    <color name="eco_price_green">#6CE0A6</color>
+    <color name="eco_price_orange">#F4A932</color>
+
+    <color name="eco_badge_sale_bg">#253029</color>
+    <color name="eco_badge_sale_border">#37463D</color>
+    <color name="eco_badge_sale_text">#C8D7CD</color>
+    <color name="eco_segmented_bg">#253029</color>
+    <color name="eco_segmented_tab_bg">#1E2621</color>
+    <color name="eco_badge_available_bg">#1E362A</color>
+    <color name="eco_badge_available_text">#6CE0A6</color>
+    <color name="eco_badge_offer_bg">#1E362A</color>
+    <color name="eco_badge_offer_text">#6CE0A6</color>
+    <color name="eco_badge_request_bg">#28352D</color>
+    <color name="eco_badge_request_text">#C8D7CD</color>
+</resources>

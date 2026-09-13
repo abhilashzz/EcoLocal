@@ -28,6 +28,9 @@ data class UserProfile(
     val location: String
         get() = locationText
 
+    val avatarRes: Int
+        get() = com.ecolocal.app.R.drawable.img_avatar_nimal
+
     companion object {
         fun fromDocument(doc: DocumentSnapshot): UserProfile? {
             if (!doc.exists()) return null

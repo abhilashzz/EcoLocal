@@ -28,6 +28,9 @@ data class CommunityService(
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
+    val providerName: String
+        get() = if (ownerName.isNotBlank()) ownerName else "Community Member"
+
     fun toMap(): Map<String, Any?> {
         return mapOf(
             "serviceId" to serviceId,

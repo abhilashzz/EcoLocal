@@ -43,6 +43,11 @@ object NotificationHelper {
         targetListingId: String? = null,
         targetConversationId: String? = null
     ) {
+        // Check user setting preference
+        if (!AppPreferences.isNotificationsEnabled()) {
+            return
+        }
+
         // Safe check for Android 13+ runtime permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(

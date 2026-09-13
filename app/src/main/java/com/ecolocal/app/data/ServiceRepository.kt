@@ -266,48 +266,40 @@ object ServiceRepository {
     fun searchAndFilter(
         query: String,
         category: String,
-        tab: String // "ALL" or "REQUESTS"
+        tab: String // "SERVICE_OFFER" or "HELP_REQUEST"
     ): List<CommunityServiceItem> {
         val trimmedQuery = query.trim()
-        val allUi = getAllAsUiItems()
+        val allServices = getAll()
 
-        return allUi.filter { item ->
+        val filtered = allServices.filter { item ->
             // Tab filter
             val matchesTab = when (tab) {
-                "SERVICE_OFFER" -> item is CommunityServiceItem.Offer
-                "HELP_REQUEST", "REQUESTS" -> item is CommunityServiceItem.Request
-                else -> item is CommunityServiceItem.Offer
+                "SERVICE_OFFER" -> item.serviceType.equals("SERVICE_OFFER", ignoreCase = true)
+                "HELP_REQUEST", "REQUESTS" -> item.serviceType.equals("HELP_REQUEST", ignoreCase = true) || item.serviceType.equals("REQUEST", ignoreCase = true)
+                else -> true
             }
 
             // Category filter
-            val itemCategory = when (item) {
-                is CommunityServiceItem.Offer -> item.category
-                is CommunityServiceItem.Request -> item.category
-            }
             val matchesCategory = if (category.equals("All", ignoreCase = true)) {
                 true
             } else {
-                itemCategory.equals(category, ignoreCase = true)
+                item.category.equals(category, ignoreCase = true)
             }
 
-            // Search query filter
+            // Search query filter: title, description, category, location, provider name
             val matchesSearch = if (trimmedQuery.isEmpty()) {
                 true
             } else {
-                val title = when (item) {
-                    is CommunityServiceItem.Offer -> item.title
-                    is CommunityServiceItem.Request -> item.title
-                }
-                val location = when (item) {
-                    is CommunityServiceItem.Offer -> item.location
-                    is CommunityServiceItem.Request -> item.location
-                }
-                title.contains(trimmedQuery, ignoreCase = true) ||
-                    location.contains(trimmedQuery, ignoreCase = true) ||
-                    itemCategory.contains(trimmedQuery, ignoreCase = true)
+                item.title.contains(trimmedQuery, ignoreCase = true) ||
+                    item.description.contains(trimmedQuery, ignoreCase = true) ||
+                    item.locationName.contains(trimmedQuery, ignoreCase = true) ||
+                    item.category.contains(trimmedQuery, ignoreCase = true) ||
+                    item.providerName.contains(trimmedQuery, ignoreCase = true)
             }
 
             matchesTab && matchesCategory && matchesSearch
         }
+
+        return filtered.map { it.toUiItem() }
     }
 }

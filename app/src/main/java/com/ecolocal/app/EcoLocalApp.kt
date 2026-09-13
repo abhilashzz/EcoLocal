@@ -12,6 +12,10 @@ class EcoLocalApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Initialize preferences and theme
+        com.ecolocal.app.util.AppPreferences.init(this)
+        com.ecolocal.app.util.AppPreferences.applyTheme(com.ecolocal.app.util.AppPreferences.getThemeMode())
+
         // Initialize online repositories
         ListingRepository.init(this)
         ServiceRepository.init(this)

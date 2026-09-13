@@ -1,18 +1,25 @@
 package com.ecolocal.app.ui.main
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ecolocal.app.R
+import com.ecolocal.app.adapter.EcoMatchAdapter
 import com.ecolocal.app.adapter.HomeMarketCategoryAdapter
 import com.ecolocal.app.adapter.HomeServiceCategoryAdapter
 import com.ecolocal.app.adapter.NearbyListingAdapter
 import com.ecolocal.app.data.ChatRepository
 import com.ecolocal.app.data.ListingRepository
+import com.ecolocal.app.data.UserRepository
 import com.ecolocal.app.databinding.ActivityHomeBinding
 import com.ecolocal.app.model.MarketCategory
 import com.ecolocal.app.model.NearbyListing
@@ -23,19 +30,24 @@ import com.ecolocal.app.ui.chat.ConversationsAdapter
 import com.ecolocal.app.ui.marketplace.MarketplaceListingDetailsActivity
 import com.ecolocal.app.ui.notifications.NotificationsActivity
 import com.ecolocal.app.ui.post.CreatePostTypeActivity
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import com.ecolocal.app.ui.profile.ProfileActivity
+import com.ecolocal.app.util.AppPreferences
 import com.ecolocal.app.util.BottomNavHelper
+import com.ecolocal.app.util.EcoMatchEngine
+import com.ecolocal.app.util.ImageLoaderHelper
+import com.ecolocal.app.util.LocationHelper
 import com.ecolocal.app.util.NavItem
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var nearbyAdapter: NearbyListingAdapter
+    private lateinit var ecoMatchAdapter: EcoMatchAdapter
     private lateinit var chatsAdapter: ConversationsAdapter
+
+    private var deviceLat: Double? = null
+    private var deviceLon: Double? = null
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -55,75 +67,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private val staticNearbyListings = listOf(
-        NearbyListing(
-            id = "sample_1",
-            title = "Math Tutoring – Grade 6–11",
-            description = "Experienced tutor offering personalized math lessons for middle and high school students.",
-            price = "Rs. 1,500/session",
-            isPriceOrange = false,
-            location = "Malabe",
-            statusText = "Available",
-            isStatusAvailable = true,
-            imageRes = R.drawable.img_home_tutor
-        ),
-        NearbyListing(
-            id = "sample_2",
-            title = "Wooden Study Desk",
-            description = "Solid teak desk with 3 drawers. Perfect for studying or home office. Minor scratches.",
-            price = "Rs. 8,500",
-            isPriceOrange = false,
-            location = "Malabe",
-            statusText = "Available",
-            isStatusAvailable = true,
-            imageRes = R.drawable.img_home_desk
-        ),
-        NearbyListing(
-            id = "sample_3",
-            title = "Free Textbooks (O/L & A/L)",
-            description = "Clean syllabus-aligned textbooks to give away for students preparing for upcoming exams.",
-            price = "FREE",
-            isPriceOrange = true,
-            location = "Kaduwela",
-            statusText = "Giveaway",
-            isStatusAvailable = false,
-            imageRes = R.drawable.img_home_books
-        ),
-        NearbyListing(
-            id = "sample_4",
-            title = "Weekend Lawn Mowing Service",
-            description = "Reliable lawn maintenance, trimming, and backyard clearing across Malabe and surrounding areas.",
-            price = "Rs. 800/hr",
-            isPriceOrange = false,
-            location = "Rajagiriya",
-            statusText = "Available",
-            isStatusAvailable = true,
-            imageRes = R.drawable.img_service_lawn
-        ),
-        NearbyListing(
-            id = "sample_5",
-            title = "1.8L Electric Rice Cooker",
-            description = "Lightly used electric rice cooker with non-stick inner pot and steamer basket. In perfect condition.",
-            price = "Rs. 4,500",
-            isPriceOrange = false,
-            location = "Battaramulla",
-            statusText = "Available",
-            isStatusAvailable = true,
-            imageRes = R.drawable.img_mkt_ricecooker
-        ),
-        NearbyListing(
-            id = "sample_6",
-            title = "A/L Chemistry & Biology Revision",
-            description = "Small group revision sessions with exam paper discussions for local syllabus students.",
-            price = "Rs. 1,200/hr",
-            isPriceOrange = false,
-            location = "Malabe",
-            statusText = "Available",
-            isStatusAvailable = true,
-            imageRes = R.drawable.img_service_tutor
-        )
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -133,11 +76,13 @@ class HomeActivity : AppCompatActivity() {
         setupSearch()
         setupCommunityServicesSection()
         setupLocalMarketplaceSection()
+        setupEcoMatchSection()
         setupNearbyRecentSection()
         setupRecentChatsSection()
         setupClickListeners()
         updateHeaderUserInfo()
         requestNotificationPermissionSafely()
+        fetchDeviceLocation()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -149,6 +94,7 @@ class HomeActivity : AppCompatActivity() {
     private val homeDataObserver = {
         runOnUiThread {
             refreshNearbyRecentListings()
+            refreshEcoMatch()
             refreshRecentChats()
             updateHeaderUserInfo()
         }
@@ -158,33 +104,55 @@ class HomeActivity : AppCompatActivity() {
         super.onStart()
         ListingRepository.addChangeListener(homeDataObserver)
         ChatRepository.addConversationObserver(homeDataObserver)
+        UserRepository.addProfileChangeListener(homeDataObserver)
+        fetchDeviceLocation()
         refreshNearbyRecentListings()
+        refreshEcoMatch()
         refreshRecentChats()
         updateHeaderUserInfo()
     }
 
     override fun onResume() {
         super.onResume()
+        fetchDeviceLocation()
         refreshNearbyRecentListings()
+        refreshEcoMatch()
         refreshRecentChats()
         updateHeaderUserInfo()
-    }
-
-    private fun updateHeaderUserInfo() {
-        val user = com.ecolocal.app.data.UserRepository.getCurrentUser()
-        val firstName = user?.fullName?.split(" ")?.firstOrNull()?.takeIf { it.isNotBlank() } ?: "Neighbor"
-        binding.tvGreeting.text = "Good morning, $firstName"
-        if (!user?.location.isNullOrEmpty()) {
-            binding.tvLocation.text = user?.location
-        } else {
-            binding.tvLocation.text = "Location not set"
-        }
     }
 
     override fun onStop() {
         super.onStop()
         ListingRepository.removeChangeListener(homeDataObserver)
         ChatRepository.removeConversationObserver(homeDataObserver)
+        UserRepository.removeProfileChangeListener(homeDataObserver)
+    }
+
+    private fun fetchDeviceLocation() {
+        LocationHelper.getDeviceLocation(this) { loc ->
+            if (loc != null) {
+                deviceLat = loc.latitude
+                deviceLon = loc.longitude
+                runOnUiThread {
+                    refreshNearbyRecentListings()
+                    refreshEcoMatch()
+                }
+            }
+        }
+    }
+
+    private fun updateHeaderUserInfo() {
+        val user = UserRepository.getCurrentUser()
+        val firstName = user?.fullName?.split(" ")?.firstOrNull()?.takeIf { it.isNotBlank() } ?: "Neighbor"
+        binding.tvGreeting.text = "Good morning, $firstName"
+        if (!user?.locationText.isNullOrBlank()) {
+            binding.tvLocation.text = user?.locationText
+        } else if (!user?.city.isNullOrBlank()) {
+            binding.tvLocation.text = user?.city
+        } else {
+            binding.tvLocation.text = "Sri Lanka"
+        }
+        ImageLoaderHelper.loadAvatar(binding.ivHomeAvatar, user?.profileImageUrl, R.drawable.img_avatar_nimal)
     }
 
     private fun setupBottomNavigation() {
@@ -201,16 +169,28 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
+        val launchSearch = {
+            val query = binding.etSearchHome.text.toString().trim()
+            val intent = Intent(this, SearchResultsActivity::class.java).apply {
+                putExtra(SearchResultsActivity.EXTRA_QUERY, query)
+            }
+            startActivity(intent)
+        }
+
+        binding.etSearchHome.setOnClickListener {
+            launchSearch()
+        }
+
+        binding.etSearchHome.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                launchSearch()
+                binding.etSearchHome.clearFocus()
+            }
+        }
+
         binding.etSearchHome.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = binding.etSearchHome.text.toString().trim()
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
-                imm?.hideSoftInputFromWindow(binding.etSearchHome.windowToken, 0)
-
-                val intent = Intent(this, SearchResultsActivity::class.java).apply {
-                    putExtra(SearchResultsActivity.EXTRA_QUERY, query)
-                }
-                startActivity(intent)
+                launchSearch()
                 true
             } else {
                 false
@@ -250,21 +230,83 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupEcoMatchSection() {
+        binding.rvEcomatch.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        ecoMatchAdapter = EcoMatchAdapter(emptyList()) { rec ->
+            val intent = Intent(this, MarketplaceListingDetailsActivity::class.java).apply {
+                putExtra(MarketplaceListingDetailsActivity.EXTRA_LISTING_ID, rec.listing.listingId)
+            }
+            startActivity(intent)
+        }
+        binding.rvEcomatch.adapter = ecoMatchAdapter
+        refreshEcoMatch()
+    }
+
+    private fun refreshEcoMatch() {
+        val allListings = ListingRepository.getAll()
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
+        val userProfile = UserRepository.getCurrentUser()
+
+        val recommendations = EcoMatchEngine.getRecommendations(
+            allListings = allListings,
+            currentUserId = currentUid,
+            userLat = deviceLat,
+            userLon = deviceLon,
+            userLocationName = userProfile?.locationText,
+            limit = 5
+        )
+        if (::ecoMatchAdapter.isInitialized) {
+            ecoMatchAdapter.updateData(recommendations)
+        }
+    }
+
     private fun buildCombinedNearbyListings(): List<NearbyListing> {
-        return ListingRepository.getAll().map { item ->
-            NearbyListing(
-                id = item.id,
-                title = item.title,
-                description = item.description,
-                price = item.price,
-                isPriceOrange = item.price.equals("FREE", ignoreCase = true) || item.listingType.equals("GIVE AWAY", ignoreCase = true),
-                location = item.location,
-                statusText = if (item.price.equals("FREE", ignoreCase = true) || item.listingType.equals("GIVE AWAY", ignoreCase = true)) "Giveaway" else "Available",
-                isStatusAvailable = item.isAvailable,
-                imageRes = item.imageRes,
-                imageUri = item.imageUri
+        val all = ListingRepository.getAll()
+        val isLocationOn = AppPreferences.isLocationSuggestionsEnabled()
+
+        val itemsWithDistance = all.map { item ->
+            val coords = LocationHelper.getListingCoordinates(item)
+            val distKm = if (isLocationOn && coords != null && deviceLat != null && deviceLon != null) {
+                LocationHelper.calculateDistanceKm(deviceLat!!, deviceLon!!, coords.first, coords.second)
+            } else null
+
+            val distFormatted = LocationHelper.formatDistance(distKm)
+            val displayLoc = if (distFormatted != null) "${item.locationName} • $distFormatted" else item.locationName
+
+            val isOrange = item.price.equals("FREE", ignoreCase = true) || item.listingType.equals("GIVE AWAY", ignoreCase = true)
+            val status = if (isOrange) "Giveaway" else "Available"
+
+            Triple(
+                NearbyListing(
+                    id = item.listingId,
+                    title = item.title,
+                    description = item.description,
+                    price = item.price,
+                    isPriceOrange = isOrange,
+                    location = displayLoc,
+                    statusText = status,
+                    isStatusAvailable = item.isAvailable,
+                    imageRes = item.imageRes,
+                    imageUri = item.imageUrl ?: item.imageUri
+                ),
+                distKm,
+                item.createdAt
             )
         }
+
+        val sorted = if (isLocationOn && deviceLat != null && deviceLon != null) {
+            // Prioritize nearby items (< 25km) first by proximity, then others by date
+            val nearby = itemsWithDistance.filter { it.second != null && it.second!! <= LocationHelper.NEARBY_RADIUS_KM }
+                .sortedBy { it.second }
+            val others = itemsWithDistance.filter { it.second == null || it.second!! > LocationHelper.NEARBY_RADIUS_KM }
+                .sortedByDescending { it.third }
+            nearby + others
+        } else {
+            itemsWithDistance.sortedByDescending { it.third }
+        }
+
+        return sorted.map { it.first }
     }
 
     private fun refreshNearbyRecentListings() {
@@ -332,10 +374,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.ivHomeAvatar.setOnClickListener {
-            val user = com.ecolocal.app.data.UserRepository.getCurrentUser()
-            val name = user?.fullName ?: "Community Member"
-            val loc = if (user?.location.isNullOrEmpty()) "" else " (${user?.location})"
-            Toast.makeText(this, "Profile: $name$loc", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
         }
     }
 

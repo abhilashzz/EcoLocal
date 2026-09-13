@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.EcoLocal" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/eco_green_primary</item>
+        <item name="colorPrimaryVariant">@color/eco_green_dark</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/eco_orange</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:windowBackground">@color/eco_bg_screen</item>
+        <item name="android:statusBarColor">@color/eco_bg_screen</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Theme.EcoLocal.Welcome">
+        <item name="android:statusBarColor">@color/eco_background_cream</item>
+        <item name="android:windowBackground">@color/eco_background_cream</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.EcoLocal.Register">
+        <item name="android:statusBarColor">@color/eco_background_cream</item>
+        <item name="android:windowBackground">@color/eco_background_cream</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.EcoLocal.Login">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/eco_bg_screen</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.EcoLocal.Main">
+        <item name="android:statusBarColor">@color/eco_bg_screen</item>
+        <item name="android:windowBackground">@color/eco_bg_screen</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+</resources>

@@ -21,6 +21,7 @@ import com.ecolocal.app.model.CommunityServiceItem
 import com.ecolocal.app.ui.chat.ChatActivity
 import com.ecolocal.app.ui.notifications.NotificationsActivity
 import com.ecolocal.app.util.BottomNavHelper
+import com.ecolocal.app.util.ImageLoaderHelper
 import com.ecolocal.app.util.NavItem
 
 class CommunityServicesActivity : AppCompatActivity() {
@@ -51,17 +52,39 @@ class CommunityServicesActivity : AppCompatActivity() {
         setupSegmentedControl()
         setupSearch()
         setupClickListeners()
+
+        handleInitialTab(intent)
+    }
+
+    private fun handleInitialTab(intent: Intent?) {
+        val initialTab = intent?.getStringExtra(EXTRA_INITIAL_TAB)
+        if (initialTab == "HELP_REQUESTS" || initialTab == "HELP_REQUEST") {
+            binding.tabHelpRequests.performClick()
+        } else if (initialTab == "SERVICE_OFFERS" || initialTab == "SERVICE_OFFER") {
+            binding.tabServiceOffers.performClick()
+        }
     }
 
     override fun onStart() {
         super.onStart()
         ServiceRepository.addChangeListener(servicesChangeListener)
+        loadUserAvatar()
         applyFilters()
     }
 
     override fun onResume() {
         super.onResume()
+        loadUserAvatar()
         applyFilters()
+    }
+
+    private fun loadUserAvatar() {
+        val user = UserRepository.getCurrentUser()
+        ImageLoaderHelper.loadAvatar(
+            binding.ivServicesAvatar,
+            user?.profileImageUrl,
+            user?.avatarRes ?: R.drawable.img_avatar_nimal
+        )
     }
 
     override fun onStop() {
@@ -219,10 +242,11 @@ class CommunityServicesActivity : AppCompatActivity() {
         }
 
         binding.ivServicesAvatar.setOnClickListener {
-            val user = UserRepository.getCurrentUser()
-            val name = user?.fullName ?: "Community Member"
-            val loc = if (user?.location.isNullOrEmpty()) "" else " (${user?.location})"
-            Toast.makeText(this, "Logged in as $name$loc", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, com.ecolocal.app.ui.profile.ProfileActivity::class.java))
         }
+    }
+
+    companion object {
+        const val EXTRA_INITIAL_TAB = "extra_initial_tab"
     }
 }

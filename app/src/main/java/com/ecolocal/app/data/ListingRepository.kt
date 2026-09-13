@@ -349,6 +349,14 @@ object ListingRepository {
             .document(listing.listingId)
             .set(listing.toMap())
             .addOnSuccessListener {
+                if (listing.ownerId.isNotBlank() && !listing.listingId.startsWith("seed_")) {
+                    EcoPointsRepository.awardPoints(
+                        userId = listing.ownerId,
+                        actionType = "CREATE_LISTING",
+                        referenceId = listing.listingId,
+                        points = EcoPointsRepository.POINTS_CREATE_LISTING
+                    )
+                }
                 onComplete?.invoke(true)
             }
             .addOnFailureListener { e ->

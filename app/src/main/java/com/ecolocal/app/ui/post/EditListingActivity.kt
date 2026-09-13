@@ -3,17 +3,21 @@ package com.ecolocal.app.ui.post
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.ecolocal.app.R
 import com.ecolocal.app.data.ListingRepository
 import com.ecolocal.app.databinding.ActivityEditListingBinding
 import com.ecolocal.app.model.MarketplaceListing
+import com.ecolocal.app.util.CloudinaryHelper
 import com.ecolocal.app.util.ImageLoaderHelper
+import kotlinx.coroutines.launch
 
 class EditListingActivity : AppCompatActivity() {
 
@@ -26,21 +30,35 @@ class EditListingActivity : AppCompatActivity() {
     private var selectedCondition: String = "Good"
     private var selectedImageUri: String? = null
 
+    private var uploadedImageUrl: String? = null
+    private var isUploadingPhoto = false
+
     private val photoPickerLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                try {
-                    contentResolver.takePersistableUriPermission(
-                        it,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                } catch (e: Exception) {
-                    // Ignore if persistable permission is not supported
-                }
-                selectedImageUri = it.toString()
-                ImageLoaderHelper.load(binding.ivEditPhotoMain, selectedImageUri, R.drawable.img_mkt_desk)
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            uri?.let { onPhotoSelected(it) }
+        }
+
+    private fun onPhotoSelected(uri: Uri) {
+        binding.containerEditPhotoMain.visibility = View.VISIBLE
+        binding.ivEditPhotoMain.setImageURI(uri)
+        isUploadingPhoto = true
+        Toast.makeText(this, "Uploading image to Cloudinary...", Toast.LENGTH_SHORT).show()
+
+        lifecycleScope.launch {
+            val result = CloudinaryHelper.uploadImage(this@EditListingActivity, uri)
+            isUploadingPhoto = false
+            if (result.isSuccess) {
+                val url = result.getOrNull()
+                uploadedImageUrl = url
+                selectedImageUri = url
+                Toast.makeText(this@EditListingActivity, "Image uploaded successfully!", Toast.LENGTH_SHORT).show()
+                ImageLoaderHelper.load(binding.ivEditPhotoMain, url, R.drawable.img_mkt_desk)
+            } else {
+                val err = result.exceptionOrNull()?.message ?: "Upload failed"
+                Toast.makeText(this@EditListingActivity, "Upload failed: $err", Toast.LENGTH_LONG).show()
             }
         }
+    }
 
     private val categories = arrayOf(
         "Furniture",
@@ -171,11 +189,11 @@ class EditListingActivity : AppCompatActivity() {
         }
 
         binding.cardEditAddPhoto.setOnClickListener {
-            photoPickerLauncher.launch("image/*")
+            photoPickerLauncher.launch(androidx.activity.result.PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.containerEditPhotoMain.setOnClickListener {
-            photoPickerLauncher.launch("image/*")
+            photoPickerLauncher.launch(androidx.activity.result.PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.btnEditDelete.setOnClickListener {
@@ -202,6 +220,11 @@ class EditListingActivity : AppCompatActivity() {
     }
 
     private fun saveChanges() {
+        if (isUploadingPhoto) {
+            Toast.makeText(this, "Please wait, photo is still uploading...", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val id = listingId ?: return
         val existing = ListingRepository.getById(id) ?: run {
             finish()
@@ -245,6 +268,7 @@ class EditListingActivity : AppCompatActivity() {
             else -> "Rs. $rawPrice"
         }
 
+        val finalImage = uploadedImageUrl ?: selectedImageUri ?: existing.imageUrl ?: existing.imageUri
         val updated = existing.copy(
             title = title,
             price = formattedPrice,
@@ -252,7 +276,8 @@ class EditListingActivity : AppCompatActivity() {
             condition = selectedCondition,
             description = description,
             locationName = location,
-            imageUri = selectedImageUri ?: existing.imageUri,
+            imageUrl = finalImage,
+            imageUri = finalImage,
             isAvailable = isAvailable,
             updatedAt = System.currentTimeMillis()
         )
